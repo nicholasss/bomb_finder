@@ -1,7 +1,7 @@
 import pygame as pg
 
 # local files
-from tileset import Tileset
+from tileset import Tileset, TileType
 
 # GLOBAL
 SCREEN_SIZE = 800, 640
@@ -10,20 +10,19 @@ NAME = "Bomb Finder"
 
 # TILES
 TILE_SCALE = 4
+TILE_SIZE = (16, 16)
+TILE_PATH = 'assets/basic-tileset.png'
 
 def main():
-    tileset_path = "./assets/basic-tileset.png"
-    tileset = pg.image.load(tileset_path)
-
-    scaled_tileset = pg.transform.scale(tileset, (160 * 4, 96 * 4))
-
+    # initialization
     pg.init()
     screen = pg.display.set_mode(SCREEN_SIZE)
     pg.display.set_caption(NAME)
 
-    scaled_tileset_rect = scaled_tileset.get_rect(center=CENTER)
+    tileset = Tileset(TILE_PATH, TILE_SIZE, TILE_SCALE)
 
-    screen.blit(scaled_tileset, scaled_tileset_rect)
+    unlicked_tile = tileset.get_tile(TileType.UNCLICKED)
+    screen.blit(unlicked_tile, screen.get_rect())
     pg.display.update()
 
     running = True
