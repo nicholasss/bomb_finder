@@ -1,5 +1,8 @@
+import pygame
+
+
 def main():
-    print("Hello from bomb-finder!")
+    print(pygame.__version__)
 
 
 if __name__ == "__main__":
