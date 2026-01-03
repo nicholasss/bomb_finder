@@ -12,3 +12,6 @@ wheels/
 # macOS files
 .DS_Store
 .DS_store
+
+# uv formatting
+.ruff_cache
