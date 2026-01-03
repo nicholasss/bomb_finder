@@ -1,4 +1,24 @@
+from enum import Enum
 import pygame as pg
+
+
+class TileType(Enum):
+    # First row
+    UNCLICKED = 0 # Not clicked yet
+    CLICKED_EMTPY   = 1 # Clicked with no number
+    CLICKED_ONE = 2
+    CLICKED_TWO = 3
+    CLICKED_THREE = 4
+    CLICKED_FOUR = 5
+    CLICKED_FIVE = 6
+
+    # Second row
+
+    CLICKED_FOUND = 10
+    CLICKED_CLUE = 11
+    UNCLICKED_FOUND = 12
+    UNCLICKED_CLUE = 13
+
 
 class Tileset:
     def __init__(self, path, tile_size=(16, 16), scale=4):
@@ -31,3 +51,6 @@ class Tileset:
     def scale_by(self, scale):
         self.tiles = [pg.transform.scale(tile, (int(tile.get_width()*scale), int(tile.get_height()*scale)))
           for tile in self.tiles]
+        
+    def get_tile(self, type: TileType) -> pg.Surface:
+        return self.tiles[type.value]
