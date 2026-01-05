@@ -1,25 +1,22 @@
 import pygame as pg
 
-# local files
 from tileset import Tileset, TileType
 from game import Game
 
-# GLOBAL
-SCREEN_SIZE = 800, 640
-CENTER = SCREEN_SIZE[0] / 2, SCREEN_SIZE[1] / 2
+# General
 NAME = "Bomb Finder"
 
-# TILESET
+# Graphics
+SCREEN_SIZE = 800, 640
+SCREEN_CENTER = SCREEN_SIZE[0] / 2, SCREEN_SIZE[1] / 2
 TILE_SCALE = 4
 TILE_SIZE = (16, 16)
+TILE_RENDER_SIZE = (TILE_SIZE[0] * TILE_SCALE, TILE_SIZE[1] * TILE_SCALE)
 TILE_PATH = "assets/asperite_files/basic-tileset.png"
-
-# GAME
-DEFAULT_GRID_SIZE = (10, 10)
-SCREEN_TILE = (TILE_SIZE[0] * TILE_SCALE, TILE_SIZE[1] * TILE_SCALE)
 FPS = 60
 
-# SEED & RNG
+# Games
+DEFAULT_GRID_SIZE = (10, 10)
 DEFAULT_SEED = 0xABCDEF1234  # All seeds should be a 10 digit hexadecimal number
 
 
@@ -31,7 +28,7 @@ def main():
     pg.display.update()
 
     tileset = Tileset(TILE_PATH, TILE_SIZE, TILE_SCALE)
-    game = Game(tileset, SCREEN_TILE, screen, DEFAULT_SEED, DEFAULT_GRID_SIZE)
+    game = Game(tileset, TILE_RENDER_SIZE, screen, DEFAULT_SEED, DEFAULT_GRID_SIZE)
     pg.display.update()
 
     # create new game screen
