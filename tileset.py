@@ -4,8 +4,8 @@ import pygame as pg
 
 class TileType(Enum):
     # First row
-    UNCLICKED = 0 # Not clicked yet
-    CLICKED_EMTPY   = 1 # Clicked with no number
+    UNCLICKED = 0  # Not clicked yet
+    CLICKED_EMTPY = 1  # Clicked with no number
     CLICKED_ONE = 2
     CLICKED_TWO = 3
     CLICKED_THREE = 4
@@ -49,8 +49,12 @@ class Tileset:
                 self.tiles.append(tile)
 
     def scale_by(self, scale):
-        self.tiles = [pg.transform.scale(tile, (int(tile.get_width()*scale), int(tile.get_height()*scale)))
-          for tile in self.tiles]
-        
+        self.tiles = [
+            pg.transform.scale(
+                tile, (int(tile.get_width() * scale), int(tile.get_height() * scale))
+            )
+            for tile in self.tiles
+        ]
+
     def get_tile(self, type: TileType) -> pg.Surface:
         return self.tiles[type.value]

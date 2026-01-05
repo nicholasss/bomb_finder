@@ -1,6 +1,7 @@
 import pygame as pg
 
-class Tile():
+
+class Tile:
     def __init__(self, is_empty=False):
         # manage tile state and change tile image on demand
         self.__clicked = False
