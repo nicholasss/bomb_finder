@@ -7,28 +7,37 @@ class Game:
     def __init__(
         self,
         tileset: Tileset,
-        tile_size: tuple[int, int],
+        tile_size: tuple[int, int],  # NOTE: shouldnt this come from the tileset?
         screen: pg.Surface,
         seed: int,
+        grid_size: tuple[int, int],
+        grid_top_left_corner: tuple[int, int] = (0, 0),
     ):
         """A game instance should returned a fully setup game, ready to play."""
         self.__tileset: Tileset = tileset
         self.__tile_size: tuple[int, int] = tile_size
         self.__screen: pg.Surface = screen
         self.__seed: int = seed
+        self.__grid_cols = grid_size[0]
+        self.__grid_rows = grid_size[1]
+
+        # x, y of the top left corner of the grid
+        self.__grid_location_x, self.__grid_location_y = grid_top_left_corner
 
         # create grid
-        self.grid = [[int]]
+        tile_width = self.__tile_size[0]
+        tile_height = self.__tile_size[1]
+        self.__grid = [[int]]
         for i in range(5):
             for j in range(5):
-                tile_location = [self.__tile_size[0] * i, self.__tile_size[1] * j]
+                grid_coord = [tile_width * i, tile_height * j]
 
                 # TODO:
                 # new_tile = Tile()
                 # use tile class instead of just tile image
 
                 self.__screen.blit(
-                    self.__tileset.get_tile(TileType.UNCLICKED), tile_location
+                    self.__tileset.get_tile(TileType.UNCLICKED), grid_coord
                 )
 
         # use seed to place bombs
