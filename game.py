@@ -7,7 +7,7 @@ class Game:
     def __init__(
         self,
         tileset: Tileset,
-        tile_size: tuple[int, int],  # NOTE: shouldnt this come from the tileset?
+        tile_render_size: tuple[int, int],
         screen: pg.Surface,
         seed: int,
         grid_size: tuple[int, int],
@@ -15,7 +15,7 @@ class Game:
     ):
         """A game instance should returned a fully setup game, ready to play."""
         self.__tileset: Tileset = tileset
-        self.__tile_size: tuple[int, int] = tile_size
+        self.__tile_render_size: tuple[int, int] = tile_render_size
         self.__screen: pg.Surface = screen
         self.__seed: int = seed
         self.__grid_cols = grid_size[0]
@@ -25,8 +25,8 @@ class Game:
         self.__grid_location_x, self.__grid_location_y = grid_top_left_corner
 
         # create grid
-        tile_width = self.__tile_size[0]
-        tile_height = self.__tile_size[1]
+        tile_width = self.__tile_render_size[0]
+        tile_height = self.__tile_render_size[1]
         self.__grid = [[int]]
         for i in range(5):
             for j in range(5):
