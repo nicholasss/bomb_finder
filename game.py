@@ -48,10 +48,13 @@ class Game:
                 if event.type == pg.QUIT:
                     running = False
 
-                if event.type == pg.MOUSEBUTTONUP:
-                    print("Clicked!")
-                    print(event.pos, "\n")
-                    # pass coord to some kind of 'handle_click'
+                elif event.type == pg.MOUSEBUTTONUP:
+                    # left click
+                    if event.button == 1:
+                        self.__handle_left_click(event.pos)
+                    # right click
+                    elif event.button == 3:
+                        self.__handle_right_click(event.pos)
 
             # 2. Update game state
 
@@ -83,11 +86,51 @@ class Game:
                 tile_state = self.__tile_grid[x][y].get_state()
                 self.__screen.blit(self.__tileset.get_tile(tile_state), tile_loc)
 
-    def handle_click(self, coord: tuple[int, int]):
+    def __handle_left_click(self, coord: tuple[int, int]):
         """Take the click, call the calculation method, then pass the click to the tile.
         The tile will change state, and then any changes to the grid should be made."""
-        pass
+        tile_clicked = self.__find_tile_from_click(coord)
 
-    def find_tile_from_click(self, coord: tuple[int, int]):
-        """ """
-        pass
+        # left click was outside grid, do nothing
+        if not self.__click_was_inside_grid(tile_clicked):
+            print("NYI: Left click outside of tile grid")
+            return
+
+        print(f"left click on tile ({tile_clicked[0]}, {tile_clicked[1]})")
+
+    def __handle_right_click(self, coord: tuple[int, int]):
+        """Take the click, call the calculation method, then pass the click to the tile.
+        The tile will change state, and then any changes to the grid should be made."""
+        tile_clicked = self.__find_tile_from_click(coord)
+
+        # right click was outside grid, do nothing
+        if not self.__click_was_inside_grid(tile_clicked):
+            print("NYI: Right click outside of tile grid")
+            return
+
+        print(f"right click on tile ({tile_clicked[0]}, {tile_clicked[1]})")
+
+    def __click_was_inside_grid(self, tile_clicked: tuple[int, int]) -> bool:
+        if tile_clicked[0] < 0 or tile_clicked[1] < 0:
+            return False
+        elif tile_clicked[0] >= self.__grid_cols or tile_clicked[1] >= self.__grid_rows:
+            return False
+
+        # if neither, then it is inside the grid
+        return True
+
+    def __find_tile_from_click(self, click_coord: tuple[int, int]) -> tuple[int, int]:
+        """Converts screen coordinates to tile grid coordinates."""
+        # click on the tile grid
+        click_x, click_y = (
+            click_coord[0] - self.__grid_location_x,
+            click_coord[1] - self.__grid_location_y,
+        )
+
+        # tile number, floor divide the tile rendering size
+        tile_x, tile_y = (
+            click_x // self.__tile_render_size[0],
+            click_y // self.__tile_render_size[1],
+        )
+
+        return (tile_x, tile_y)
