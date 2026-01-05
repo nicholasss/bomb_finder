@@ -9,13 +9,13 @@ class Game:
         tileset: Tileset,
         tile_size: tuple[int, int],
         screen: pg.Surface,
-        seed: str,
+        seed: int,
     ):
         """A game instance should returned a fully setup game, ready to play."""
         self.__tileset: Tileset = tileset
         self.__tile_size: tuple[int, int] = tile_size
         self.__screen: pg.Surface = screen
-        self.__seed: str = seed
+        self.__seed: int = seed
 
         # create grid
         self.grid = [[int]]

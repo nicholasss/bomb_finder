@@ -18,6 +18,9 @@ TILE_PATH = "assets/asperite_files/basic-tileset.png"
 SCREEN_TILE = (TILE_SIZE[0] * TILE_SCALE, TILE_SIZE[1] * TILE_SCALE)
 FPS = 60
 
+# SEED & RNG
+DEFAULT_SEED = 0xABCDEF1234  # All seeds should be a 10 digit hexadecimal number
+
 
 def main():
     pg.init()
@@ -27,7 +30,7 @@ def main():
     pg.display.update()
 
     tileset = Tileset(TILE_PATH, TILE_SIZE, TILE_SCALE)
-    game = Game(tileset, SCREEN_TILE, screen)
+    game = Game(tileset, SCREEN_TILE, screen, DEFAULT_SEED)
     pg.display.update()
 
     # create new game screen
