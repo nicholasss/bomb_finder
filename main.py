@@ -15,6 +15,7 @@ TILE_SIZE = (16, 16)
 TILE_PATH = "assets/asperite_files/basic-tileset.png"
 
 # GAME
+DEFAULT_GRID_SIZE = (10, 10)
 SCREEN_TILE = (TILE_SIZE[0] * TILE_SCALE, TILE_SIZE[1] * TILE_SCALE)
 FPS = 60
 
@@ -30,7 +31,7 @@ def main():
     pg.display.update()
 
     tileset = Tileset(TILE_PATH, TILE_SIZE, TILE_SCALE)
-    game = Game(tileset, SCREEN_TILE, screen, DEFAULT_SEED)
+    game = Game(tileset, SCREEN_TILE, screen, DEFAULT_SEED, DEFAULT_GRID_SIZE)
     pg.display.update()
 
     # create new game screen
