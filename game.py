@@ -3,8 +3,10 @@ from tileset import Tileset, TileType
 from tile import Tile
 
 
-class Game():
-    def __init__(self, tileset: Tileset, tile_size: tuple[int, int], screen: pg.Surface):
+class Game:
+    def __init__(
+        self, tileset: Tileset, tile_size: tuple[int, int], screen: pg.Surface
+    ):
         self.__tileset: Tileset = tileset
         self.__tile_size: tuple[int, int] = tile_size
         self.__screen: pg.Surface = screen
@@ -22,7 +24,7 @@ class Game():
         pg.display.flip()
 
         # draw the map
-            # put in number of bombs into the 
+        # put in number of bombs into the
 
         # perform animations if you lose the game
 
@@ -42,11 +44,7 @@ class Game():
                 if event.type == pg.MOUSEBUTTONUP:
                     print("Clicked!")
                     print(event.pos, "\n")
-                    for row in self.grid:
-                        for tile in row:
-                            pass
+                    # pass coord to some kind of 'handle_click'
 
     def click(self, pos: tuple[int, int]):
         pass
-        
-    
