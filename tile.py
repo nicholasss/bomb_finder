@@ -1,5 +1,6 @@
 from enum import Enum
 import pygame as pg
+from tileset import TileType
 
 
 class Flag(Enum):
@@ -18,6 +19,7 @@ class Tile:
         self.__has_bomb = has_bomb
         self.__neighboring_bombs = 0
         self.__flag_state = Flag.NO_FLAG
+        self.__tile_type = TileType.UNCLICKED
 
         self.is_revealed = False
 
@@ -33,6 +35,9 @@ class Tile:
 
         # return whether there is a bomb or not
         return self.__has_bomb
+
+    def get_state(self) -> TileType:
+        return self.__tile_type
 
     def has_bomb(self) -> bool:
         return self.__has_bomb
