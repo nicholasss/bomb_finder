@@ -16,7 +16,7 @@ TILE_PATH = "assets/asperite_files/basic-tileset.png"
 FPS = 60
 
 # Games
-DEFAULT_GRID_SIZE = (10, 10)
+DEFAULT_GRID_SIZE = (4, 4)
 DEFAULT_SEED = 0xABCDEF1234  # All seeds should be a 10 digit hexadecimal number
 
 
