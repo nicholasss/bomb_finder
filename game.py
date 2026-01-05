@@ -69,13 +69,19 @@ class Game:
         """Renders the grid during every frame"""
         for x in range(self.__grid_cols):
             for y in range(self.__grid_rows):
-                tile_col_row = [
-                    self.__tile_render_size[0] * x,
-                    self.__tile_render_size[1] * y,
-                ]
+                tile_corner_x, tile_corner_y = (
+                    (self.__tile_render_size[0] * x),
+                    (self.__tile_render_size[1] * y),
+                )
+
+                # offset the grid by the topleft corner
+                tile_loc = (
+                    tile_corner_x + self.__grid_location_x,
+                    tile_corner_y + self.__grid_location_y,
+                )
 
                 tile_state = self.__tile_grid[x][y].get_state()
-                self.__screen.blit(self.__tileset.get_tile(tile_state), tile_col_row)
+                self.__screen.blit(self.__tileset.get_tile(tile_state), tile_loc)
 
     def handle_click(self, coord: tuple[int, int]):
         """Take the click, call the calculation method, then pass the click to the tile.
