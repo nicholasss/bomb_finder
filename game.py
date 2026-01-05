@@ -60,7 +60,7 @@ class Game:
 
             # 3. Render the game, after clearing it with a fill
             self.__screen.fill("black")
-            self.render_grid()
+            self.__render_grid()
 
             # 4. Update display
             pg.display.flip()
@@ -68,7 +68,7 @@ class Game:
             # 5. Limit the frame rate
             game_clock.tick(fps)
 
-    def render_grid(self):
+    def __render_grid(self):
         """Renders the grid during every frame"""
         for x in range(self.__grid_cols):
             for y in range(self.__grid_rows):
