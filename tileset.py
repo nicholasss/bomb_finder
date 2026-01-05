@@ -49,6 +49,7 @@ class Tileset:
                 self.tiles.append(tile)
 
     def scale_by(self, scale):
+        self.tile_size = tuple(map(lambda x: x * scale, self.tile_size))
         self.tiles = [pg.transform.scale(tile, (int(tile.get_width()*scale), int(tile.get_height()*scale)))
           for tile in self.tiles]
         
