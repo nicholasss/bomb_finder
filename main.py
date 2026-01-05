@@ -36,17 +36,9 @@ def main():
     # select difficulty or mode
 
     # load the tile types
-    # TODO: use the game method start_game() instead
-    running = True
-    while running:
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                running = False
 
-            if event.type == pg.MOUSEBUTTONUP:
-                print("Click at", event.pos)
-
-        clock.tick(FPS)
+    # Main game loop
+    game.start_game(clock, FPS)
 
     # exiting event loop to exit
     pg.quit()

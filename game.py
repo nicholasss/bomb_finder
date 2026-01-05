@@ -45,7 +45,7 @@ class Game:
         pg.display.flip()
         print("Game Initialized")
 
-    def start_game(self):
+    def start_game(self, game_clock: pg.time.Clock, fps: int):
         """Start the main game loop"""
 
         # Main game loop
@@ -59,6 +59,8 @@ class Game:
                     print("Clicked!")
                     print(event.pos, "\n")
                     # pass coord to some kind of 'handle_click'
+
+            game_clock.tick(fps)
 
     def handle_click(self, coord: tuple[int, int]):
         """Take the click, call the calculation method, then pass the click to the tile.
