@@ -14,10 +14,10 @@ class TileType(Enum):
 
     # Second row
 
-    CLICKED_FOUND = 10
-    CLICKED_CLUE = 11
-    UNCLICKED_FOUND = 12
-    UNCLICKED_CLUE = 13
+    CLICKED_CERTAIN = 10
+    CLICKED_UNCERTAIN = 11
+    UNCLICKED_CERTAIN = 12
+    UNCLICKED_UNCERTAIN = 13
 
 
 class Tileset:
