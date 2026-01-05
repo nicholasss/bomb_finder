@@ -1,17 +1,43 @@
+from enum import Enum
 import pygame as pg
+
+
+class Flag(Enum):
+    NO_FLAG = 0
+    UNCERTAIN_FLAG = 1
+    CERTAIN_FLAG = 2
 
 
 class Tile:
     """Tile instances should store whether there is a bomb,
-    whether it is clicked, and how many neighboring bombs there are."""
+    whether it is clicked, whether there is a bomb, what type of flag,
+    and how many neighboring bombs there are.
+    We should know at initialization whether the tile has a bomb or not."""
 
-    def __init__(self, has_bomb=False):
-        self.clicked = False
+    def __init__(self, has_bomb: bool = False):
         self.__has_bomb = has_bomb
         self.__neighboring_bombs = 0
+        self.__flag_state = Flag.NO_FLAG
 
-    def click(self) -> bool:
+        self.is_revealed = False
+
+    def reveal(self) -> bool:
         """Perfroms a click on the tile.
         This will first mark the tile as clicked,"""
-        self.clicked = True
+
+        # mark tile as revealed
+        self.is_revealed = True
+
+        # a tile cannot be flagged if it is revealed
+        self.__flag_state = Flag.NO_FLAG
+
+        # return whether there is a bomb or not
         return self.__has_bomb
+
+    def has_bomb(self) -> bool:
+        return self.__has_bomb
+
+    def cycle_flag(self) -> Flag:
+        # 0 -> 1 -> 2 -> 3 ...
+        self.__flag_state = Flag((self.__flag_state.value + 1) % 3)
+        return self.__flag_state
