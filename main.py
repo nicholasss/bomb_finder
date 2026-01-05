@@ -7,7 +7,7 @@ from game import Game
 NAME = "Bomb Finder"
 
 # Graphics
-SCREEN_SIZE = 800, 640
+SCREEN_SIZE = 1200, 1200
 SCREEN_CENTER = SCREEN_SIZE[0] / 2, SCREEN_SIZE[1] / 2
 TILE_SCALE = 4
 TILE_SIZE = (16, 16)
