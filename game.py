@@ -114,7 +114,6 @@ class Game:
             if new_bomb_coord not in bomb_coords:
                 bomb_coords.append(new_bomb_coord)
 
-        print(bomb_coords)
         return bomb_coords
 
     def __handle_left_click(self, coord: tuple[int, int]):

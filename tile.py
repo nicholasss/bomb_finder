@@ -39,6 +39,12 @@ class Tile:
     def get_state(self) -> TileType:
         return self.__tile_type
 
+    def set_number(self, new_num: int):
+        pass
+
+    def place_bomb(self):
+        self.__has_bomb = True
+
     def has_bomb(self) -> bool:
         return self.__has_bomb
 
