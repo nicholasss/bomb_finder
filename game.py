@@ -10,14 +10,16 @@ class Game():
         self.__screen: pg.Surface = screen
 
         # Tile surfaces
-        self.__unclicked_tile = tileset.get_tile(TileType.UNCLICKED)
+        self.__unclicked_tile = tileset.get_tile(TileType.UNCLICKED).copy()
 
-        self.grid = [[]]
+        self.grid = [[int]]
         for i in range(5):
             for j in range(5):
                 tile_location = [self.__tile_size[0] * i, self.__tile_size[1] * j]
-                self.__screen.blit(self.__unclicked_tile, tile)
+                new_tile = Tile()
+                self.__screen.blit(self.__unclicked_tile, tile_location)
 
+        pg.display.flip()
 
         # draw the map
             # put in number of bombs into the 
@@ -25,13 +27,9 @@ class Game():
         # perform animations if you lose the game
 
         # show redo game seed/new game
-        tile = Tile(is_empty=True)
-        item_found = tile.click()
-
-        pass
+        print("Game Initialized")
 
     def play_round(self):
-        pass
         # create the grid, shuffle the items, and draw
         # process events
 
@@ -44,7 +42,9 @@ class Game():
                 if event.type == pg.MOUSEBUTTONUP:
                     print("Clicked!")
                     print(event.pos, "\n")
-
+                    for row in self.grid:
+                        for tile in row:
+                            pass
 
     def click(self, pos: tuple[int, int]):
         pass
