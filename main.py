@@ -18,6 +18,7 @@ FPS = 60
 # Games
 DEFAULT_GRID_SIZE = (4, 4)
 DEFAULT_SEED = 0xABCDEF1234  # All seeds should be a 10 digit hexadecimal number
+DEFAULT_NUMBER_BOMBS = 3
 
 
 def main():
@@ -33,6 +34,7 @@ def main():
         tileset,
         TILE_RENDER_SIZE,
         screen,
+        DEFAULT_NUMBER_BOMBS,
         DEFAULT_SEED,
         DEFAULT_GRID_SIZE,
         grid_top_left_corner,

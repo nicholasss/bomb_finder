@@ -1,3 +1,4 @@
+import random
 import pygame as pg
 from tileset import Tileset, TileType
 from tile import Tile
@@ -9,6 +10,7 @@ class Game:
         tileset: Tileset,
         tile_render_size: tuple[int, int],
         screen: pg.Surface,
+        number_of_bombs: int,
         seed: int,
         grid_size: tuple[int, int],
         grid_top_left_corner: tuple[int, int] = (0, 0),
@@ -17,7 +19,6 @@ class Game:
         self.__tileset: Tileset = tileset
         self.__tile_render_size: tuple[int, int] = tile_render_size
         self.__screen: pg.Surface = screen
-        self.__seed: int = seed
 
         self.__grid_cols = grid_size[0]
         self.__grid_rows = grid_size[1]
@@ -26,16 +27,24 @@ class Game:
         # x, y of the top left corner of the grid
         self.__grid_location_x, self.__grid_location_y = grid_top_left_corner
 
+        # number of bombs
+        self.__seed: int = seed
+        self.__number_of_bombs = number_of_bombs
+
         # create grid
         for x in range(self.__grid_cols):
             self.__tile_grid.append([])
-            for y in range(self.__grid_rows):
+            for _ in range(self.__grid_rows):
                 self.__tile_grid[x].append(Tile())
 
         # seeding bombs
+        random.seed(self.__seed)
+        self.__place_bombs()
 
-        pg.display.flip()
-        print("Game Initialized")
+        # calculate numbers
+
+        # complete iniialization
+        print("DEBUG: Game Initialized")
 
     def start_game(self, game_clock: pg.time.Clock, fps: int):
         """Start the main game loop"""
@@ -56,7 +65,8 @@ class Game:
                     elif event.button == 3:
                         self.__handle_right_click(event.pos)
 
-            # 2. Update game state
+            # 2. Update game state (game logic)
+            # i.e. whether game won, game lost, tile flood occurs
 
             # 3. Render the game, after clearing it with a fill
             self.__screen.fill("black")
@@ -85,6 +95,27 @@ class Game:
 
                 tile_state = self.__tile_grid[x][y].get_state()
                 self.__screen.blit(self.__tileset.get_tile(tile_state), tile_loc)
+
+    def __place_bombs(self):
+        """Places bombs pseudo-randomly, determined by seed and number of bombs requested."""
+        bomb_coord_list = self.__make_bomb_list()
+        for row, col in bomb_coord_list:
+            self.__tile_grid[row][col].place_bomb()
+
+    def __make_bomb_list(self) -> list[tuple[int, int]]:
+        """Returns a list of coordinates where bombs will be placed, without duplicates."""
+        bomb_coords = []
+        while len(bomb_coords) < self.__number_of_bombs:
+            new_bomb_coord = (
+                random.randint(0, self.__grid_rows - 1),
+                random.randint(0, self.__grid_cols - 1),
+            )
+
+            if new_bomb_coord not in bomb_coords:
+                bomb_coords.append(new_bomb_coord)
+
+        print(bomb_coords)
+        return bomb_coords
 
     def __handle_left_click(self, coord: tuple[int, int]):
         """Take the click, call the calculation method, then pass the click to the tile.
