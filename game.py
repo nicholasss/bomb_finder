@@ -18,29 +18,21 @@ class Game:
         self.__tile_render_size: tuple[int, int] = tile_render_size
         self.__screen: pg.Surface = screen
         self.__seed: int = seed
+
         self.__grid_cols = grid_size[0]
         self.__grid_rows = grid_size[1]
+        self.__tile_grid: list[list[Tile]] = []
 
         # x, y of the top left corner of the grid
         self.__grid_location_x, self.__grid_location_y = grid_top_left_corner
 
         # create grid
-        tile_width = self.__tile_render_size[0]
-        tile_height = self.__tile_render_size[1]
-        self.__grid = [[int]]
-        for i in range(self.__grid_cols):
-            for j in range(self.__grid_rows):
-                grid_coord = [tile_width * i, tile_height * j]
+        for x in range(self.__grid_cols):
+            self.__tile_grid.append([])
+            for y in range(self.__grid_rows):
+                self.__tile_grid[x].append(Tile())
 
-                # TODO:
-                # new_tile = Tile()
-                # use tile class instead of just tile image
-
-                self.__screen.blit(
-                    self.__tileset.get_tile(TileType.UNCLICKED), grid_coord
-                )
-
-        # use seed to place bombs
+        # seeding bombs
 
         pg.display.flip()
         print("Game Initialized")
@@ -51,6 +43,7 @@ class Game:
         # Main game loop
         running = True
         while running:
+            # 1. Handle events
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
@@ -60,7 +53,29 @@ class Game:
                     print(event.pos, "\n")
                     # pass coord to some kind of 'handle_click'
 
+            # 2. Update game state
+
+            # 3. Render the game, after clearing it with a fill
+            self.__screen.fill("black")
+            self.render_grid()
+
+            # 4. Update display
+            pg.display.flip()
+
+            # 5. Limit the frame rate
             game_clock.tick(fps)
+
+    def render_grid(self):
+        """Renders the grid during every frame"""
+        for x in range(self.__grid_cols):
+            for y in range(self.__grid_rows):
+                tile_col_row = [
+                    self.__tile_render_size[0] * x,
+                    self.__tile_render_size[1] * y,
+                ]
+
+                tile_state = self.__tile_grid[x][y].get_state()
+                self.__screen.blit(self.__tileset.get_tile(tile_state), tile_col_row)
 
     def handle_click(self, coord: tuple[int, int]):
         """Take the click, call the calculation method, then pass the click to the tile.
