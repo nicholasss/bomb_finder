@@ -28,8 +28,8 @@ class Game:
         tile_width = self.__tile_render_size[0]
         tile_height = self.__tile_render_size[1]
         self.__grid = [[int]]
-        for i in range(5):
-            for j in range(5):
+        for i in range(self.__grid_cols):
+            for j in range(self.__grid_rows):
                 grid_coord = [tile_width * i, tile_height * j]
 
                 # TODO:
