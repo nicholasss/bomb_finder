@@ -27,8 +27,16 @@ def main():
     clock = pg.time.Clock()
     pg.display.update()
 
+    grid_top_left_corner = (100, 100)
     tileset = Tileset(TILE_PATH, TILE_SIZE, TILE_SCALE)
-    game = Game(tileset, TILE_RENDER_SIZE, screen, DEFAULT_SEED, DEFAULT_GRID_SIZE)
+    game = Game(
+        tileset,
+        TILE_RENDER_SIZE,
+        screen,
+        DEFAULT_SEED,
+        DEFAULT_GRID_SIZE,
+        grid_top_left_corner,
+    )
     pg.display.update()
 
     # create new game screen
