@@ -36,10 +36,10 @@ class Game:
         pg.display.flip()
         print("Game Initialized")
 
-    def play_round(self):
-        # create the grid, shuffle the items, and draw
-        # process events
+    def start_game(self):
+        """Start the main game loop"""
 
+        # Main game loop
         running = True
         while running:
             for event in pg.event.get():
@@ -51,5 +51,11 @@ class Game:
                     print(event.pos, "\n")
                     # pass coord to some kind of 'handle_click'
 
-    def click(self, pos: tuple[int, int]):
+    def handle_click(self, coord: tuple[int, int]):
+        """Take the click, call the calculation method, then pass the click to the tile.
+        The tile will change state, and then any changes to the grid should be made."""
+        pass
+
+    def find_tile_from_click(self, coord: tuple[int, int]):
+        """ """
         pass
