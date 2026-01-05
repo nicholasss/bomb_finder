@@ -39,6 +39,7 @@ def main():
     # select difficulty or mode
 
     # load the tile types
+    # TODO: use the game method start_game() instead
     running = True
     while running:
         for event in pg.event.get():
