@@ -53,5 +53,5 @@ class Tile:
 
     def cycle_flag(self) -> Flag:
         # 0 -> 1 -> 2 -> 3 ...
-        self.__flag_state = Flag((self.__flag_state.value + 1) % 3)
+        self.__flag_state = Flag((self.__flag_state.value - 1) % 3)
         return self.__flag_state
