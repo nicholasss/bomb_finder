@@ -53,10 +53,10 @@ class Tileset:
         tile_height = self.tile_size[1]
 
         # iterates from top left corner, to top right corner, then down a row
-        for col in range(0, self.rect.width, tile_width):
-            for row in range(0, self.rect.height, tile_height):
+        for row in range(0, self.rect.height, tile_height):
+            for col in range(0, self.rect.width, tile_width):
                 tile_image = pg.Surface(self.tile_size)
-                tile_image.blit(self.image, (0, 0), (row, col, *self.tile_size))
+                tile_image.blit(self.image, (0, 0), (col, row, *self.tile_size))
                 self.tiles.append(tile_image)
 
     def scale_by(self, scale):
