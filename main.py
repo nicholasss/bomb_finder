@@ -39,7 +39,6 @@ def main():
         DEFAULT_GRID_SIZE,
         grid_top_left_corner,
     )
-    pg.display.update()
 
     # create new game screen
 
