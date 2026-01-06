@@ -15,6 +15,8 @@ TILE_RENDER_SIZE = (TILE_SIZE[0] * TILE_SCALE, TILE_SIZE[1] * TILE_SCALE)
 TILE_PATH = "assets/asperite_files/basic-tileset.png"
 FPS = 60
 
+DEBUG_TEXTURES = True
+
 # Games
 DEFAULT_GRID_SIZE = (4, 4)
 DEFAULT_SEED = 0xABCDEF1234  # All seeds should be a 10 digit hexadecimal number
@@ -30,6 +32,18 @@ def main():
 
     grid_top_left_corner = (100, 100)
     tileset = Tileset(TILE_PATH, TILE_SIZE, TILE_SCALE)
+
+    # loading texture debug
+    if DEBUG_TEXTURES:
+        for i, tile in enumerate(tileset.tiles):
+            print(f"texture tile:{i}")
+            screen.fill("black")
+            screen.blit(tile, grid_top_left_corner)
+
+            # render loop
+            pg.display.flip()
+            clock.tick(2)
+
     game = Game(
         tileset,
         TILE_RENDER_SIZE,
