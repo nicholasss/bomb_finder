@@ -96,6 +96,34 @@ class Game:
                 tile_state = self.__tile_grid[x][y].get_state()
                 self.__screen.blit(self.__tileset.get_tile(tile_state), tile_loc)
 
+    def __count_bombs(self, center_tile: tuple[int, int]) -> int:
+        """Counts the bombs surrounding the tile in the center."""
+        number_of_bombs = 0
+        center_x, center_y = center_tile
+
+        for x in range(-1, 2):
+            for y in range(-1, 2):
+                # iterate through the surrounding tiles
+                tile_x, tile_y = center_x + x, center_y + y
+
+                # skip looking at the center tile itself
+                if x == 0 and y == 0:
+                    continue
+
+                # check if tile is too low outside grid
+                elif tile_x < 0 or tile_y < 0:
+                    continue
+
+                # check if tile is too high outside grid
+                elif tile_x >= self.__grid_rows or tile_y >= self.__grid_cols:
+                    continue
+
+                # check for bomb
+                if self.__tile_grid[tile_x][tile_y].has_bomb():
+                    number_of_bombs += 1
+
+        return number_of_bombs
+
     def __place_bombs(self):
         """Places bombs pseudo-randomly, determined by seed and number of bombs requested."""
         bomb_coord_list = self.__make_bomb_list()
