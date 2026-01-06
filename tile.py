@@ -21,20 +21,56 @@ class Tile:
         self.__flag_state = Flag.NO_FLAG
         self.__tile_type = TileType.UNCLICKED
 
-        self.is_revealed = False
+        self.was_clicked = False
 
-    def reveal(self) -> bool:
-        """Perfroms a click on the tile.
-        This will first mark the tile as clicked,"""
+    def __update_type(self):
+        # 1. check hidden states and return early if its hidden
+        if not self.was_clicked:
+            if self.__flag_state == Flag.NO_FLAG:
+                self.__tile_type = TileType.UNCLICKED
 
-        # mark tile as revealed
-        self.is_revealed = True
+            elif self.__flag_state == Flag.CERTAIN_FLAG:
+                self.__tile_type = TileType.UNCLICKED_CERTAIN
 
+            elif self.__flag_state == Flag.UNCERTAIN_FLAG:
+                self.__tile_type = TileType.UNCLICKED_UNCERTAIN
+
+            return
+
+        # 2. check clicked states, tile is not hidden
+        # 2a. first render bombs
+
+    def perform_left_click(self) -> bool:
+        """Perfroms a left click on the tile. This will first mark the tile as revealed,
+        then will update internal flag state.
+        Finally it will return whether the click was on a bomb."""
+        self.was_clicked = True
         # a tile cannot be flagged if it is revealed
         self.__flag_state = Flag.NO_FLAG
 
-        # return whether there is a bomb or not
-        return self.__has_bomb
+        # update type
+        self.__update_type()
+
+        # NOTE: I think the logic for the following two should be in Game class, but unsure of how to provide the 'trigger'
+        if self.__has_bomb:
+            print("NYI: Game over due to clicking on bomb")
+            return True
+
+        if self.__neighboring_bombs == 0:
+            print("NYI: Flood all empty tiles, and surrounding number tiles.")
+
+        # not clicked on bomb
+        return False
+
+    def perform_right_click(self):
+        """Perfroms a right click on the tile.
+        This will cycle through the flags."""
+        self.__cycle_flag()
+        self.__update_type()
+
+        print(
+            f"DEBUG: tile updated to tile {self.__tile_type.value}: {self.__tile_type.name}"
+        )
 
     def get_state(self) -> TileType:
         return self.__tile_type
@@ -51,7 +87,7 @@ class Tile:
     def has_bomb(self) -> bool:
         return self.__has_bomb
 
-    def cycle_flag(self) -> Flag:
+    def __cycle_flag(self) -> Flag:
         # 0 -> 1 -> 2 -> 3 ...
         self.__flag_state = Flag((self.__flag_state.value - 1) % 3)
         return self.__flag_state

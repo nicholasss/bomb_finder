@@ -95,6 +95,14 @@ class Game:
                 )
 
                 tile_state = self.__tile_grid[x][y].get_state()
+
+                # Print debugging
+                if tile_state != TileType.UNCLICKED:
+                    # print(
+                    #     f"RENDER DEBUG: tiletype of {tile_state.name}={tile_state.value}"
+                    # )
+                    pass
+
                 self.__screen.blit(self.__tileset.get_tile(tile_state), tile_loc)
 
     def __count_all_bombs(self):
@@ -162,14 +170,17 @@ class Game:
             return
 
         clicked_x, clicked_y = tile_clicked
-        print(f"left click on tile ({clicked_x}, {clicked_y})")
+        clicked_tile = self.__tile_grid[clicked_x][clicked_y]
 
-        has_bomb = self.__tile_grid[clicked_x][clicked_y].has_bomb()
-        tile_number = self.__tile_grid[clicked_x][clicked_y].get_number()
-        if has_bomb:
-            print("tile has bomb")
-        else:
-            print(f"tile has {tile_number} bomb(s) next to it")
+        # Print debugging
+        # print(f"left click on tile ({clicked_x}, {clicked_y})")
+        # if clicked_tile.has_bomb():
+        #     print("DEBUG: tile has bomb")
+        # else:
+        #     print(f"DEBUG: tile has {clicked_tile.get_number()} bomb(s) next to it")
+
+        # send click event to the tile
+        clicked_tile.perform_left_click()
 
     def __handle_right_click(self, coord: tuple[int, int]):
         """Take the click, call the calculation method, then pass the click to the tile.
@@ -181,7 +192,19 @@ class Game:
             print("NYI: Right click outside of tile grid")
             return
 
-        print(f"right click on tile ({tile_clicked[0]}, {tile_clicked[1]})")
+        clicked_x, clicked_y = tile_clicked
+        clicked_tile = self.__tile_grid[clicked_x][clicked_y]
+
+        # Print debugging
+        # print(f"DEBUG: right click on tile ({clicked_x}, {clicked_y})")
+
+        # if clicked_tile.has_bomb():
+        #     print("DEBUG: tile has bomb")
+        # else:
+        #     print(f"DEBUG: tile has {clicked_tile.get_number()} bomb(s) next to it")
+
+        # send click event to the tile
+        clicked_tile.perform_right_click()
 
     def __click_was_inside_grid(self, tile_clicked: tuple[int, int]) -> bool:
         if tile_clicked[0] < 0 or tile_clicked[1] < 0:
