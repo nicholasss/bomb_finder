@@ -42,6 +42,7 @@ class Game:
         self.__place_bombs()
 
         # calculate numbers
+        self.__count_all_bombs()
 
         # complete iniialization
         print("DEBUG: Game Initialized")
@@ -96,7 +97,13 @@ class Game:
                 tile_state = self.__tile_grid[x][y].get_state()
                 self.__screen.blit(self.__tileset.get_tile(tile_state), tile_loc)
 
-    def __count_bombs(self, center_tile: tuple[int, int]) -> int:
+    def __count_all_bombs(self):
+        for x in range(self.__grid_cols):
+            for y in range(self.__grid_rows):
+                number_of_bombs = self.__count_bombs_one_tile((x, y))
+                self.__tile_grid[x][y].set_number(number_of_bombs)
+
+    def __count_bombs_one_tile(self, center_tile: tuple[int, int]) -> int:
         """Counts the bombs surrounding the tile in the center."""
         number_of_bombs = 0
         center_x, center_y = center_tile
