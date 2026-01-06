@@ -11,13 +11,23 @@ class TileType(Enum):
     CLICKED_THREE = 4
     CLICKED_FOUR = 5
     CLICKED_FIVE = 6
-
+    CLICKED_SIX = 7
+    CLICKED_SEVEN = 8
+    CLICKED_EIGHT = 9
     # Second row
-
     CLICKED_CERTAIN = 10
     CLICKED_UNCERTAIN = 11
     UNCLICKED_CERTAIN = 12
     UNCLICKED_UNCERTAIN = 13
+    # Third row
+    BOMB_A = 20
+    BOMB_B = 21
+    BOMB_I = 28
+    BOMB_J = 29
+    BOMB_K = 38
+    BOMB_L = 39
+    BOMB_M = 48
+    BOMB_N = 49
 
 
 class Tileset:
