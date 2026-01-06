@@ -161,7 +161,15 @@ class Game:
             print("NYI: Left click outside of tile grid")
             return
 
-        print(f"left click on tile ({tile_clicked[0]}, {tile_clicked[1]})")
+        clicked_x, clicked_y = tile_clicked
+        print(f"left click on tile ({clicked_x}, {clicked_y})")
+
+        has_bomb = self.__tile_grid[clicked_x][clicked_y].has_bomb()
+        tile_number = self.__tile_grid[clicked_x][clicked_y].get_number()
+        if has_bomb:
+            print("tile has bomb")
+        else:
+            print(f"tile has {tile_number} bomb(s) next to it")
 
     def __handle_right_click(self, coord: tuple[int, int]):
         """Take the click, call the calculation method, then pass the click to the tile.

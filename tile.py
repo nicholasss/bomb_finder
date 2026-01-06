@@ -40,7 +40,10 @@ class Tile:
         return self.__tile_type
 
     def set_number(self, new_num: int):
-        pass
+        self.__neighboring_bombs = new_num
+
+    def get_number(self) -> int:
+        return self.__neighboring_bombs
 
     def place_bomb(self):
         self.__has_bomb = True
