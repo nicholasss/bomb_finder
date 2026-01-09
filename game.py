@@ -203,11 +203,11 @@ class Game:
                     continue
 
                 # check if tile is too high outside grid
-                elif tile_col >= self.__grid_rows or tile_row >= self.__grid_cols:
+                elif tile_col >= self.__grid_cols or tile_row >= self.__grid_rows:
                     continue
 
                 # check for bomb
-                if self.__tile_grid[tile_row][tile_col].has_bomb():
+                if self.__tile_grid[tile_col][tile_row].has_bomb():
                     number_of_bombs += 1
 
         print(f"tile {center_tile} as {number_of_bombs} bombs")
