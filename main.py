@@ -18,7 +18,7 @@ FPS = 60
 DEBUG_TEXTURES = False
 
 # Games
-DEFAULT_GRID_SIZE = (5, 4)
+DEFAULT_GRID_SIZE = (6, 6)
 DEFAULT_SEED = 0xABCDEF1234  # All seeds should be a 10 digit hexadecimal number
 DEFAULT_NUMBER_BOMBS = 3
 
@@ -52,6 +52,7 @@ def main():
         DEFAULT_SEED,
         DEFAULT_GRID_SIZE,
         grid_top_left_corner,
+        debug_mode=True,
     )
 
     # create new game screen

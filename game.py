@@ -14,13 +14,17 @@ class Game:
         seed: int,
         grid_size: tuple[int, int],
         grid_top_left_corner: tuple[int, int] = (0, 0),
+        debug_mode: bool = False,
     ):
         """
         A game instance should returned a fully setup game, ready to play.
         """
+        self.__debug_mode: bool = debug_mode
+
         self.__tileset: Tileset = tileset
         self.__tile_render_size: tuple[int, int] = tile_render_size
         self.__screen: pg.Surface = screen
+        self.__font: pg.Font = pg.font.SysFont(None, 30)
 
         self.__grid_cols = grid_size[0]
         self.__grid_rows = grid_size[1]
@@ -99,6 +103,10 @@ class Game:
             # 3. Render the grid
             self.__render_grid()
 
+            # 3a. debug mode
+            if self.__debug_mode:
+                self.__render_debug_overlay()
+
             # 4. Update display
             pg.display.flip()
 
@@ -125,6 +133,48 @@ class Game:
                 tile_state = self.__tile_grid[x][y].get_state()
 
                 self.__screen.blit(self.__tileset.get_tile(tile_state), tile_loc)
+
+                # debug mode
+                if self.__debug_mode:
+                    text = f"{self.__tile_grid[x][y].get_number()}"
+                    if self.__tile_grid[x][y].has_bomb():
+                        text = "B"
+
+                    num_text = self.__font.render(text, True, "black")
+                    num_rect = num_text.get_rect()
+
+                    margin = 15
+                    num_loc = tile_loc[0] + margin, tile_loc[1] + margin
+                    self.__screen.blit(num_text, num_loc, num_rect)
+
+    def __render_debug_overlay(self):
+        screen_width, screen_height = self.__screen.get_size()
+        margin = 10
+
+        # top left corner
+        win_x, win_y = 300, margin
+
+        # width and height
+        win_width = 850
+        win_height = screen_height - margin - win_x
+
+        # pg.Rect(x, y, width, height)
+        window_rect = pg.Rect(win_x, win_y, win_width, win_height)
+        window_surf = pg.Surface((win_width, win_height), pg.SRCALPHA)
+
+        overlay_color = (255, 255, 255, 80)
+        pg.draw.rect(window_surf, overlay_color, window_rect)
+
+        # debug info
+        text = "DEBUG MODE"
+
+        text_surf = self.__font.render(text, True, (255, 255, 255))
+        text_rect = text_surf.get_rect()
+        text_rect.topleft = (10, 10)
+
+        window_surf.blit(text_surf, text_rect)
+
+        self.__screen.blit(window_surf, (win_x, win_y))
 
     def __count_all_bombs(self):
         for col in range(self.__grid_cols):
@@ -160,6 +210,7 @@ class Game:
                 if self.__tile_grid[tile_row][tile_col].has_bomb():
                     number_of_bombs += 1
 
+        print(f"tile {center_tile} as {number_of_bombs} bombs")
         return number_of_bombs
 
     def __place_bombs(self):
@@ -210,7 +261,7 @@ class Game:
                 # 1b. iterate through and add surrounding tiles to_reveal list
                 for x in range(-1, 2):
                     for y in range(-1, 2):
-                        print("\n")
+                        print("")
                         tile_x, tile_y = tile_visit_x + x, tile_visit_y + y
                         print(f"Should we reveal {(tile_x, tile_y)}?")
 
