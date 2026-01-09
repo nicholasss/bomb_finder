@@ -65,7 +65,8 @@ class Game:
         while continue_game:
             # 0. Reset tile selection
             selected_col, selected_row = self.__mouse_is_down_on
-            self.__tile_grid[selected_col][selected_row].perform_left_deselect()
+            if self.__click_was_inside_grid(self.__mouse_is_down_on):
+                self.__tile_grid[selected_col][selected_row].perform_left_deselect()
 
             # 1a. Handle single events
             for event in pg.event.get():
@@ -92,10 +93,9 @@ class Game:
                     pg.mouse.get_pos()
                 )
 
-                selected_col, selected_row = self.__mouse_is_down_on
-
-                # BUG: If selected_row or selected_col is outside of grid, then it will crash
-                self.__tile_grid[selected_col][selected_row].perform_select()
+                if self.__click_was_inside_grid(self.__mouse_is_down_on):
+                    selected_col, selected_row = self.__mouse_is_down_on
+                    self.__tile_grid[selected_col][selected_row].perform_select()
 
             # 2. clear the screen
             self.__screen.fill("black")
