@@ -15,7 +15,9 @@ class Game:
         grid_size: tuple[int, int],
         grid_top_left_corner: tuple[int, int] = (0, 0),
     ):
-        """A game instance should returned a fully setup game, ready to play."""
+        """
+        A game instance should returned a fully setup game, ready to play.
+        """
         self.__tileset: Tileset = tileset
         self.__tile_render_size: tuple[int, int] = tile_render_size
         self.__screen: pg.Surface = screen
@@ -48,9 +50,9 @@ class Game:
         print("DEBUG: Game Initialized")
 
     def start_game(self, game_clock: pg.time.Clock, fps: int):
-        """Start the main game loop"""
-
-        # Main game loop
+        """
+        Start the main game loop
+        """
         running = True
         while running:
             # 1. Handle events
@@ -80,7 +82,9 @@ class Game:
             game_clock.tick(fps)
 
     def __render_grid(self):
-        """Renders the grid during every frame"""
+        """
+        Renders the grid during every frame
+        """
         for x in range(self.__grid_cols):
             for y in range(self.__grid_rows):
                 tile_corner_x, tile_corner_y = (
@@ -105,7 +109,9 @@ class Game:
                 self.__tile_grid[x][y].set_number(number_of_bombs)
 
     def __count_bombs_one_tile(self, center_tile: tuple[int, int]) -> int:
-        """Counts the bombs surrounding the tile in the center."""
+        """
+        Counts the bombs surrounding the tile in the center.
+        """
         number_of_bombs = 0
         center_x, center_y = center_tile
 
@@ -133,13 +139,17 @@ class Game:
         return number_of_bombs
 
     def __place_bombs(self):
-        """Places bombs pseudo-randomly, determined by seed and number of bombs requested."""
+        """
+        Places bombs pseudo-randomly, determined by seed and number of bombs requested.
+        """
         bomb_coord_list = self.__make_bomb_list()
         for row, col in bomb_coord_list:
             self.__tile_grid[row][col].place_bomb()
 
     def __make_bomb_list(self) -> list[tuple[int, int]]:
-        """Returns a list of coordinates where bombs will be placed, without duplicates."""
+        """
+        Returns a list of coordinates where bombs will be placed, without duplicates.
+        """
         bomb_coords = []
         while len(bomb_coords) < self.__number_of_bombs:
             new_bomb_coord = (
@@ -213,6 +223,8 @@ class Game:
         The tile will change state, and then any changes to the grid should be made.
 
         This method will return a boolean, to indicate whether to continue the game or not.
+        True: continue the game
+        False: game is over
         """
         clicked_tile_coord = self.__find_tile_from_click(coord)
 
@@ -250,8 +262,11 @@ class Game:
         return True
 
     def __handle_right_click(self, coord: tuple[int, int]):
-        """Take the click, call the calculation method, then pass the click to the tile.
-        The tile will change state, and then any changes to the grid should be made."""
+        """
+        Take the right click, call the calculation method, then pass the click to the tile.
+
+        The tile will then change its flag state to cycle through the two types of flags, and the blank tile.
+        """
         tile_clicked = self.__find_tile_from_click(coord)
 
         # right click was outside grid, do nothing
@@ -283,7 +298,9 @@ class Game:
         return True
 
     def __find_tile_from_click(self, click_coord: tuple[int, int]) -> tuple[int, int]:
-        """Converts screen coordinates to tile grid coordinates."""
+        """
+        Converts screen coordinates to tile grid coordinates.
+        """
         # click on the tile grid
         click_x, click_y = (
             click_coord[0] - self.__grid_location_x,
