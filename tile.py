@@ -63,7 +63,7 @@ class Tile:
         self.__tile_type = TileType.BOMB_A
         print("NYI: Bomb explosion animation")
 
-    def perform_left_select(self):
+    def perform_select(self):
         """
         Selects the tile, before the click is done.
         Should show as a blank tile.
@@ -82,7 +82,7 @@ class Tile:
         self.__is_selected = False
         self.__update_type()
 
-    def perform_left_click(self):
+    def reveal_click(self):
         """
         Perfroms a left click on the tile.
         We will first mark the tile as clicked and then update its state.
@@ -91,7 +91,7 @@ class Tile:
         self.__flag_state = Flag.NO_FLAG
         self.__update_type()
 
-    def perform_right_click(self):
+    def flag_click(self):
         """
         Perfroms a right click on the tile.
         This will cycle through the flags.

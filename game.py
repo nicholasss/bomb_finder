@@ -78,20 +78,18 @@ class Game:
                 elif event.type == pg.MOUSEBUTTONUP:
                     if event.button == 1:
                         self.__mouse_is_down = False
-                        continue_game = self.__handle_left_click(event.pos)
+                        continue_game = self.__handle_reveal_click(event.pos)
                     elif event.button == 3:
-                        self.__handle_right_click(event.pos)
+                        self.__handle_flag_click(event.pos)
 
             # 1b. Handle 'ongoing' events
             if self.__mouse_is_down:
-                # save tile selected from current coord
                 self.__mouse_is_down_on = self.__find_tile_from_coord(
                     pg.mouse.get_pos()
                 )
 
-                # use tile to make selected
                 selected_x, selected_y = self.__mouse_is_down_on
-                self.__tile_grid[selected_x][selected_y].perform_left_select()
+                self.__tile_grid[selected_x][selected_y].perform_select()
 
             # 2. clear the screen
             self.__screen.fill("black")
@@ -193,28 +191,23 @@ class Game:
         From a starting coordinate of 'first_tile', find all adjascent tiles that need to be revealed.
         Utilizing a DFS algorithm.
         """
-
-        # tiles_to_visit and tiles_to_reveal start with the first_tile
         tiles_to_visit: list[tuple[int, int]] = [first_tile]
         tiles_to_reveal: list[tuple[int, int]] = [first_tile]
-
-        # TODO: write DFS algo
-        #
-        # remove last (fifo) tile from to_visit list and visit it
         while len(tiles_to_visit) > 0:
             tile_being_visited = tiles_to_visit.pop()
             tile_visit_x, tile_visit_y = tile_being_visited
 
             # 1. check if empty tile
             if self.__tile_grid[tile_visit_x][tile_visit_y].get_number() <= 0:
-                # 2. IF it is tile with 0, then add to to_visit and...
+                # 1a. IF it is tile with 0, then add to to_visit and...
                 if tile_being_visited not in tiles_to_reveal:
                     tiles_to_reveal.append(tile_being_visited)
 
-                # iterate through and add surrounding tiles to_reveal list
+                # TODO: make into some kind of iterator function
+                #
+                # 1b. iterate through and add surrounding tiles to_reveal list
                 for x in range(-1, 2):
                     for y in range(-1, 2):
-                        # iterate through the surrounding tiles
                         tile_x, tile_y = tile_visit_x + x, tile_visit_y + y
 
                         # skip looking at the center tile itself
@@ -241,7 +234,7 @@ class Game:
 
         return tiles_to_reveal
 
-    def __handle_left_click(self, coord: tuple[int, int]) -> bool:
+    def __handle_reveal_click(self, coord: tuple[int, int]) -> bool:
         """
         Take the click, call the calculation method, then pass the click to the tile.
         The tile will change state, and then any changes to the grid should be made.
@@ -268,7 +261,7 @@ class Game:
 
         if clicked_tile.has_bomb():
             print("NYI: Game over due to clicking on bomb")
-            clicked_tile.perform_left_click()
+            clicked_tile.reveal_click()
 
             # End game
             return False
@@ -277,15 +270,15 @@ class Game:
         if tile_number == 0:
             tiles_to_flood = self.__make_tile_flood_reveal_list(clicked_tile_coord)
             for tile_x, tile_y in tiles_to_flood:
-                self.__tile_grid[tile_x][tile_y].perform_left_click()
+                self.__tile_grid[tile_x][tile_y].reveal_click()
         # Normal Click
         else:
-            clicked_tile.perform_left_click()
+            clicked_tile.reveal_click()
 
         # Continue game, since no bomb
         return True
 
-    def __handle_right_click(self, coord: tuple[int, int]):
+    def __handle_flag_click(self, coord: tuple[int, int]):
         """
         Take the right click, call the calculation method, then pass the click to the tile.
 
@@ -301,32 +294,8 @@ class Game:
         clicked_x, clicked_y = tile_clicked
         clicked_tile = self.__tile_grid[clicked_x][clicked_y]
 
-        # Print debugging
-        # print(f"DEBUG: right click on tile ({clicked_x}, {clicked_y})")
-
-        # if clicked_tile.has_bomb():
-        #     print("DEBUG: tile has bomb")
-        # else:
-        #     print(f"DEBUG: tile has {clicked_tile.get_number()} bomb(s) next to it")
-
-        # send click event to the tile
-        clicked_tile.perform_right_click()
-
-    def __handle_left_select(self, coord: tuple[int, int]):
-        """
-        The tile under the mouse, while the mouse click has not completed should show as blank.
-        Once the tile is not under the mouse, we want to return it to its previous state.
-        """
-        selected_tile_coord = self.__find_tile_from_coord(coord)
-
-        # left mousedown is outside grid, do nothing
-        if not self.__click_was_inside_grid(selected_tile_coord):
-            return
-
-        # print(f"DEBUG: tile selected {selected_tile_coord}")
-
-        selected_x, selected_y = selected_tile_coord
-        selected_tile = self.__tile_grid[selected_x][selected_y].perform_left_select()
+        # send flag event to the tile
+        clicked_tile.flag_click()
 
     def __click_was_inside_grid(self, tile_clicked: tuple[int, int]) -> bool:
         if tile_clicked[0] < 0 or tile_clicked[1] < 0:
