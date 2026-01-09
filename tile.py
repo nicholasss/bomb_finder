@@ -10,10 +10,12 @@ class Flag(Enum):
 
 
 class Tile:
-    """Tile instances should store whether there is a bomb,
+    """
+    Tile instances should store whether there is a bomb,
     whether it is clicked, whether there is a bomb, what type of flag,
     and how many neighboring bombs there are.
-    We should know at initialization whether the tile has a bomb or not."""
+    We should know at initialization whether the tile has a bomb or not.
+    """
 
     def __init__(self, has_bomb: bool = False):
         self.__has_bomb = has_bomb
