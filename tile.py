@@ -21,17 +21,22 @@ class Tile:
         self.__neighboring_bombs = 0
         self.__flag_state = Flag.NO_FLAG
         self.__tile_type = TileType.UNCLICKED
-
-        self.was_clicked = False
+        self.__was_clicked = False
+        self.__is_selected = False
 
     def __update_type(self):
         """
         Update the tiles 'TileType', at self.__tile_type, to reflect its current internal state.
-        This method is called every render cycle.
+        This method should be called every time a method is called that changes state.
         """
-        # first looking at non-clicked tile states
-        # 1. check hidden states and return early if its hidden
-        if not self.was_clicked:
+        # 1. look at non-clicked tile states
+        if self.__is_selected:
+            self.__tile_type = TileType.CLICKED_EMTPY
+
+            return
+
+        # 2. check hidden states and return early if its hidden
+        if not self.__was_clicked:
             if self.__flag_state == Flag.NO_FLAG:
                 self.__tile_type = TileType.UNCLICKED
 
@@ -44,7 +49,7 @@ class Tile:
             return
 
         # then looking at clicked tile states without bomb
-        # 2. check clicked states without bomb
+        # 3. check clicked states without bomb
         if not self.__has_bomb:
             # print(
             #     f"DEBUG: nbombs={self.__neighboring_bombs} new_type={TileType(self.__neighboring_bombs + 1)}"
@@ -57,12 +62,27 @@ class Tile:
         # set to bomb first frame
         self.__tile_type = TileType.BOMB_A
 
+    def perform_left_select(self):
+        """
+        Selects the tile, before the click is done.
+        Should show as a blank tile.
+        """
+        self.__is_selected = True
+        self.__update_type()
+
+    def perform_left_deselect(self):
+        """
+        Deselects the tile.
+        """
+        self.__is_selected = False
+        self.__update_type()
+
     def perform_left_click(self):
         """
         Perfroms a left click on the tile.
         We will first mark the tile as clicked and then update its state.
         """
-        self.was_clicked = True
+        self.__was_clicked = True
         self.__flag_state = Flag.NO_FLAG
         self.__update_type()
 

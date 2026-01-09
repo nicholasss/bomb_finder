@@ -33,6 +33,10 @@ class Game:
         self.__seed: int = seed
         self.__number_of_bombs = number_of_bombs
 
+        # mosue status
+        self.__mouse_is_down = False
+        self.__mouse_is_down_on: tuple[int, int] = (-1, -1)
+
         # create grid
         for x in range(self.__grid_cols):
             self.__tile_grid.append([])
@@ -55,17 +59,39 @@ class Game:
         """
         continue_game = True
         while continue_game:
-            # 1. Handle events
+            # 0. Reset tile selection
+            selected_x, selected_y = self.__mouse_is_down_on
+            self.__tile_grid[selected_x][selected_y].perform_left_deselect()
+
+            # 1a. Handle single events
             for event in pg.event.get():
+                # Quit game
                 if event.type == pg.QUIT:
                     continue_game = False
 
+                # Mouse click has started
+                elif event.type == pg.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.__mouse_is_down = True
+
+                # Mouse click is complete
                 elif event.type == pg.MOUSEBUTTONUP:
                     if event.button == 1:
-                        # if there is a bomb at tile, the game will end
+                        self.__mouse_is_down = False
                         continue_game = self.__handle_left_click(event.pos)
                     elif event.button == 3:
                         self.__handle_right_click(event.pos)
+
+            # 1b. Handle 'ongoing' events
+            if self.__mouse_is_down:
+                # save tile selected from current coord
+                self.__mouse_is_down_on = self.__find_tile_from_coord(
+                    pg.mouse.get_pos()
+                )
+
+                # use tile to make selected
+                selected_x, selected_y = self.__mouse_is_down_on
+                self.__tile_grid[selected_x][selected_y].perform_left_select()
 
             # 2. clear the screen
             self.__screen.fill("black")
@@ -224,7 +250,7 @@ class Game:
         True: continue the game
         False: game is over
         """
-        clicked_tile_coord = self.__find_tile_from_click(coord)
+        clicked_tile_coord = self.__find_tile_from_coord(coord)
 
         # left click was outside grid, do nothing
         if not self.__click_was_inside_grid(clicked_tile_coord):
@@ -265,7 +291,7 @@ class Game:
 
         The tile will then change its flag state to cycle through the two types of flags, and the blank tile.
         """
-        tile_clicked = self.__find_tile_from_click(coord)
+        tile_clicked = self.__find_tile_from_coord(coord)
 
         # right click was outside grid, do nothing
         if not self.__click_was_inside_grid(tile_clicked):
@@ -286,6 +312,22 @@ class Game:
         # send click event to the tile
         clicked_tile.perform_right_click()
 
+    def __handle_left_select(self, coord: tuple[int, int]):
+        """
+        The tile under the mouse, while the mouse click has not completed should show as blank.
+        Once the tile is not under the mouse, we want to return it to its previous state.
+        """
+        selected_tile_coord = self.__find_tile_from_coord(coord)
+
+        # left mousedown is outside grid, do nothing
+        if not self.__click_was_inside_grid(selected_tile_coord):
+            return
+
+        # print(f"DEBUG: tile selected {selected_tile_coord}")
+
+        selected_x, selected_y = selected_tile_coord
+        selected_tile = self.__tile_grid[selected_x][selected_y].perform_left_select()
+
     def __click_was_inside_grid(self, tile_clicked: tuple[int, int]) -> bool:
         if tile_clicked[0] < 0 or tile_clicked[1] < 0:
             return False
@@ -295,7 +337,7 @@ class Game:
         # if neither, then it is inside the grid
         return True
 
-    def __find_tile_from_click(self, click_coord: tuple[int, int]) -> tuple[int, int]:
+    def __find_tile_from_coord(self, click_coord: tuple[int, int]) -> tuple[int, int]:
         """
         Converts screen coordinates to tile grid coordinates.
         """
