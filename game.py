@@ -38,10 +38,10 @@ class Game:
         self.__mouse_is_down_on: tuple[int, int] = (-1, -1)
 
         # create grid
-        for x in range(self.__grid_cols):
+        for col in range(self.__grid_cols):
             self.__tile_grid.append([])
             for _ in range(self.__grid_rows):
-                self.__tile_grid[x].append(Tile())
+                self.__tile_grid[col].append(Tile())
 
         # seeding bombs
         random.seed(self.__seed)
@@ -60,8 +60,8 @@ class Game:
         continue_game = True
         while continue_game:
             # 0. Reset tile selection
-            selected_x, selected_y = self.__mouse_is_down_on
-            self.__tile_grid[selected_x][selected_y].perform_left_deselect()
+            selected_col, selected_row = self.__mouse_is_down_on
+            self.__tile_grid[selected_col][selected_row].perform_left_deselect()
 
             # 1a. Handle single events
             for event in pg.event.get():
@@ -88,8 +88,10 @@ class Game:
                     pg.mouse.get_pos()
                 )
 
-                selected_x, selected_y = self.__mouse_is_down_on
-                self.__tile_grid[selected_x][selected_y].perform_select()
+                selected_col, selected_row = self.__mouse_is_down_on
+
+                # BUG: If selected_row or selected_col is outside of grid, then it will crash
+                self.__tile_grid[selected_col][selected_row].perform_select()
 
             # 2. clear the screen
             self.__screen.fill("black")
@@ -125,37 +127,37 @@ class Game:
                 self.__screen.blit(self.__tileset.get_tile(tile_state), tile_loc)
 
     def __count_all_bombs(self):
-        for x in range(self.__grid_cols):
-            for y in range(self.__grid_rows):
-                number_of_bombs = self.__count_bombs_one_tile((x, y))
-                self.__tile_grid[x][y].set_number(number_of_bombs)
+        for col in range(self.__grid_cols):
+            for row in range(self.__grid_rows):
+                number_of_bombs = self.__count_bombs_one_tile((col, row))
+                self.__tile_grid[col][row].set_number(number_of_bombs)
 
     def __count_bombs_one_tile(self, center_tile: tuple[int, int]) -> int:
         """
         Counts the bombs surrounding the tile in the center.
         """
         number_of_bombs = 0
-        center_x, center_y = center_tile
+        center_col, center_row = center_tile
 
-        for x in range(-1, 2):
-            for y in range(-1, 2):
+        for col in range(-1, 2):
+            for row in range(-1, 2):
                 # iterate through the surrounding tiles
-                tile_x, tile_y = center_x + x, center_y + y
+                tile_col, tile_row = center_col + col, center_row + row
 
                 # skip looking at the center tile itself
-                if x == 0 and y == 0:
+                if col == 0 and row == 0:
                     continue
 
                 # check if tile is too low outside grid
-                elif tile_x < 0 or tile_y < 0:
+                elif tile_col < 0 or tile_row < 0:
                     continue
 
                 # check if tile is too high outside grid
-                elif tile_x >= self.__grid_rows or tile_y >= self.__grid_cols:
+                elif tile_col >= self.__grid_rows or tile_row >= self.__grid_cols:
                     continue
 
                 # check for bomb
-                if self.__tile_grid[tile_x][tile_y].has_bomb():
+                if self.__tile_grid[tile_row][tile_col].has_bomb():
                     number_of_bombs += 1
 
         return number_of_bombs
@@ -165,7 +167,7 @@ class Game:
         Places bombs pseudo-randomly, determined by seed and number of bombs requested.
         """
         bomb_coord_list = self.__make_bomb_list()
-        for row, col in bomb_coord_list:
+        for col, row in bomb_coord_list:
             self.__tile_grid[row][col].place_bomb()
 
     def __make_bomb_list(self) -> list[tuple[int, int]]:
@@ -208,21 +210,29 @@ class Game:
                 # 1b. iterate through and add surrounding tiles to_reveal list
                 for x in range(-1, 2):
                     for y in range(-1, 2):
+                        print("\n")
                         tile_x, tile_y = tile_visit_x + x, tile_visit_y + y
+                        print(f"Should we reveal {(tile_x, tile_y)}?")
 
                         # skip looking at the center tile itself
                         if x == 0 and y == 0:
+                            print("\tNo, its the tile itself")
                             continue
 
                         # check if tile is too low outside grid
                         elif tile_x < 0 or tile_y < 0:
+                            print("\tNo, its too low outside grid (negative)")
                             continue
 
                         # check if tile is too high outside grid
-                        elif tile_x >= self.__grid_rows or tile_y >= self.__grid_cols:
+                        elif tile_x >= self.__grid_cols or tile_y >= self.__grid_rows:
+                            print(
+                                "\tNo, its too high outside grid (greater than rows/cols)"
+                            )
                             continue
 
                         # add to to_reveal list
+                        print("\tYes, its valid.")
                         tile_coord = (tile_x, tile_y)
                         if tile_coord not in tiles_to_reveal:
                             tiles_to_reveal.append(tile_coord)
