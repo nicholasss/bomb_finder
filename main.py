@@ -1,6 +1,6 @@
 import pygame as pg
 
-from tileset import Tileset, TileType
+from tileset import Tileset
 from game import Game
 
 # General

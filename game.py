@@ -1,6 +1,6 @@
 import random
 import pygame as pg
-from tileset import Tileset, TileType
+from tileset import Tileset
 from tile import Tile
 
 

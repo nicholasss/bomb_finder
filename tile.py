@@ -1,5 +1,4 @@
 from enum import Enum
-import pygame as pg
 from tileset import TileType
 
 
