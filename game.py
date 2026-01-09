@@ -96,13 +96,6 @@ class Game:
 
                 tile_state = self.__tile_grid[x][y].get_state()
 
-                # Print debugging
-                if tile_state != TileType.UNCLICKED:
-                    # print(
-                    #     f"RENDER DEBUG: tiletype of {tile_state.name}={tile_state.value}"
-                    # )
-                    pass
-
                 self.__screen.blit(self.__tileset.get_tile(tile_state), tile_loc)
 
     def __count_all_bombs(self):
