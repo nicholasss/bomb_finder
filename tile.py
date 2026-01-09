@@ -61,12 +61,17 @@ class Tile:
         # 3. clicked states with bomb
         # set to bomb first frame
         self.__tile_type = TileType.BOMB_A
+        print("NYI: Bomb explosion animation")
 
     def perform_left_select(self):
         """
         Selects the tile, before the click is done.
         Should show as a blank tile.
         """
+        # do not show blank tile if the tile was already revealed
+        if self.__was_clicked:
+            return
+
         self.__is_selected = True
         self.__update_type()
 
