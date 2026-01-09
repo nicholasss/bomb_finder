@@ -53,26 +53,24 @@ class Game:
         """
         Start the main game loop
         """
-        running = True
-        while running:
+        continue_game = True
+        while continue_game:
             # 1. Handle events
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    running = False
+                    continue_game = False
 
                 elif event.type == pg.MOUSEBUTTONUP:
-                    # left click
                     if event.button == 1:
-                        self.__handle_left_click(event.pos)
-                    # right click
+                        # if there is a bomb at tile, the game will end
+                        continue_game = self.__handle_left_click(event.pos)
                     elif event.button == 3:
                         self.__handle_right_click(event.pos)
 
-            # 2. Update game state (game logic)
-            # i.e. whether game won, game lost, tile flood occurs
-
-            # 3. Render the game, after clearing it with a fill
+            # 2. clear the screen
             self.__screen.fill("black")
+
+            # 3. Render the grid
             self.__render_grid()
 
             # 4. Update display
