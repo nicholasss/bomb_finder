@@ -152,28 +152,102 @@ class Game:
 
         return bomb_coords
 
-    def __handle_left_click(self, coord: tuple[int, int]):
-        """Take the click, call the calculation method, then pass the click to the tile.
-        The tile will change state, and then any changes to the grid should be made."""
-        tile_clicked = self.__find_tile_from_click(coord)
+    def __make_tile_flood_reveal_list(
+        self, first_tile: tuple[int, int]
+    ) -> list[tuple[int, int]]:
+        """
+        From a starting coordinate of 'first_tile', find all adjascent tiles that need to be revealed.
+        Utilizing a DFS algorithm.
+        """
+
+        # tiles_to_visit and tiles_to_reveal start with the first_tile
+        tiles_to_visit: list[tuple[int, int]] = [first_tile]
+        tiles_to_reveal: list[tuple[int, int]] = [first_tile]
+
+        # TODO: write DFS algo
+        #
+        # remove last (fifo) tile from to_visit list and visit it
+        while len(tiles_to_visit) > 0:
+            tile_being_visited = tiles_to_visit.pop()
+            tile_visit_x, tile_visit_y = tile_being_visited
+
+            # 1. check if empty tile
+            if self.__tile_grid[tile_visit_x][tile_visit_y].get_number() <= 0:
+                # 2. IF it is tile with 0, then add to to_visit and...
+                if tile_being_visited not in tiles_to_reveal:
+                    tiles_to_reveal.append(tile_being_visited)
+
+                # iterate through and add surrounding tiles to_reveal list
+                for x in range(-1, 2):
+                    for y in range(-1, 2):
+                        # iterate through the surrounding tiles
+                        tile_x, tile_y = tile_visit_x + x, tile_visit_y + y
+
+                        # skip looking at the center tile itself
+                        if x == 0 and y == 0:
+                            continue
+
+                        # check if tile is too low outside grid
+                        elif tile_x < 0 or tile_y < 0:
+                            continue
+
+                        # check if tile is too high outside grid
+                        elif tile_x >= self.__grid_rows or tile_y >= self.__grid_cols:
+                            continue
+
+                        # add to to_reveal list
+                        tile_coord = (tile_x, tile_y)
+                        if tile_coord not in tiles_to_reveal:
+                            tiles_to_reveal.append(tile_coord)
+                            tiles_to_visit.append(tile_coord)
+
+            # its not an empty tile, only add to tiles_to_reveal, do not check surrounding tiles
+            if tile_being_visited not in tiles_to_reveal:
+                tiles_to_reveal.append(tile_being_visited)
+
+        return tiles_to_reveal
+
+    def __handle_left_click(self, coord: tuple[int, int]) -> bool:
+        """
+        Take the click, call the calculation method, then pass the click to the tile.
+        The tile will change state, and then any changes to the grid should be made.
+
+        This method will return a boolean, to indicate whether to continue the game or not.
+        """
+        clicked_tile_coord = self.__find_tile_from_click(coord)
 
         # left click was outside grid, do nothing
-        if not self.__click_was_inside_grid(tile_clicked):
+        if not self.__click_was_inside_grid(clicked_tile_coord):
             print("NYI: Left click outside of tile grid")
-            return
 
-        clicked_x, clicked_y = tile_clicked
+            # Continue game
+            return True
+
+        clicked_x, clicked_y = clicked_tile_coord
         clicked_tile = self.__tile_grid[clicked_x][clicked_y]
+        tile_number = clicked_tile.get_number()
 
         # Print debugging
         # print(f"left click on tile ({clicked_x}, {clicked_y})")
-        # if clicked_tile.has_bomb():
-        #     print("DEBUG: tile has bomb")
-        # else:
-        #     print(f"DEBUG: tile has {clicked_tile.get_number()} bomb(s) next to it")
 
-        # send click event to the tile
-        clicked_tile.perform_left_click()
+        if clicked_tile.has_bomb():
+            print("NYI: Game over due to clicking on bomb")
+            clicked_tile.perform_left_click()
+
+            # End game
+            return False
+
+        # Perform flood of empty tiles
+        if tile_number == 0:
+            tiles_to_flood = self.__make_tile_flood_reveal_list(clicked_tile_coord)
+            for tile_x, tile_y in tiles_to_flood:
+                self.__tile_grid[tile_x][tile_y].perform_left_click()
+        # Normal Click
+        else:
+            clicked_tile.perform_left_click()
+
+        # Continue game, since no bomb
+        return True
 
     def __handle_right_click(self, coord: tuple[int, int]):
         """Take the click, call the calculation method, then pass the click to the tile.
