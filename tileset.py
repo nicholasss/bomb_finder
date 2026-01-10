@@ -22,6 +22,12 @@ class TileType(Enum):
     # Third row
     BOMB_A = 20
     BOMB_B = 21
+    BOMB_C = 22
+    BOMB_D = 23
+    BOMB_E = 24
+    BOMB_F = 25
+    BOMB_G = 26
+    BOMB_H = 27
     BOMB_I = 28
     BOMB_J = 29
     BOMB_K = 38
