@@ -31,7 +31,7 @@ class Tile:
         """
         # 1. look at non-clicked tile states
         if self.__is_selected:
-            self.__tile_type = TileType.CLICKED_EMTPY
+            self.__tile_type = TileType.CLICKED_EMPTY
 
             return
 

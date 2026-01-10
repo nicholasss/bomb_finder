@@ -5,7 +5,7 @@ import pygame as pg
 class TileType(Enum):
     # First row
     UNCLICKED = 0  # Not clicked yet
-    CLICKED_EMTPY = 1  # Clicked with no number
+    CLICKED_EMPTY = 1  # Clicked with no number
     CLICKED_ONE = 2
     CLICKED_TWO = 3
     CLICKED_THREE = 4
