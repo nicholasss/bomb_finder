@@ -148,37 +148,32 @@ class Game:
                     self.__screen.blit(num_text, num_loc, num_rect)
 
     def __render_debug_overlay(self):
-        screen_width, screen_height = self.__screen.get_size()
-        margin = 10
-
+        # NOTE: gave up on window position calculations
         # top left corner
-        win_x, win_y = 300, margin
-
-        # width and height
-        win_width = 850
-        win_height = screen_height - margin - win_x
+        win_left = 350
+        win_top = 30
+        win_width = 750
+        win_height = 400
 
         # pg.Rect(x, y, width, height)
-        window_rect = pg.Rect(win_x, win_y, win_width, win_height)
+        window_rect = pg.Rect(win_left, win_top, win_width, win_height)
         window_surf = pg.Surface((win_width, win_height), pg.SRCALPHA)
 
         overlay_color = (255, 255, 255, 80)
         pg.draw.rect(window_surf, overlay_color, window_rect)
 
         # debug info
-        text = "DEBUG MODE"
         mouse_loc = pg.mouse.get_pos()
         grid_loc = f"{self.__find_tile_from_coord(mouse_loc)}"
+        text = f"DEBUG MODE\nB -> bomb at location\n# -> calculated neighboring bombs\n\nmouse_loc={mouse_loc}\ngrid_loc={grid_loc}"
 
-        text += f"\nmouse_loc={mouse_loc}\ngrid_loc={grid_loc}"
-
+        # render text
         text_surf = self.__font.render(text, True, (255, 255, 255))
-        text_rect = text_surf.get_rect()
-        text_rect.topleft = (10, 10)
+        text_rect = (window_rect.topleft[0] + 5, window_rect.topleft[1] + 5)
 
         window_surf.blit(text_surf, text_rect)
 
-        self.__screen.blit(window_surf, (win_x, win_y))
+        self.__screen.blit(window_surf, (win_left, win_top))
 
     def __count_all_bombs(self):
         for col in range(self.__grid_cols):
