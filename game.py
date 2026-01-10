@@ -167,6 +167,10 @@ class Game:
 
         # debug info
         text = "DEBUG MODE"
+        mouse_loc = pg.mouse.get_pos()
+        grid_loc = f"{self.__find_tile_from_coord(mouse_loc)}"
+
+        text += f"\nmouse_loc={mouse_loc}\ngrid_loc={grid_loc}"
 
         text_surf = self.__font.render(text, True, (255, 255, 255))
         text_rect = text_surf.get_rect()
