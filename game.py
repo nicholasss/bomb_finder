@@ -1,6 +1,6 @@
 import random
 import pygame as pg
-from tileset import Tileset
+from tileset import TileType, Tileset
 from tile import Tile
 
 
@@ -164,8 +164,27 @@ class Game:
 
         # debug info
         mouse_loc = pg.mouse.get_pos()
-        grid_loc = f"{self.__find_tile_from_coord(mouse_loc)}"
-        text = f"DEBUG MODE\nB -> bomb at location\n# -> calculated neighboring bombs\n\nmouse_loc={mouse_loc}\ngrid_loc={grid_loc}"
+        grid_loc = self.__find_tile_from_coord(mouse_loc)
+        if self.__click_was_inside_grid(grid_loc):
+            tile_state = self.__tile_grid[grid_loc[0]][grid_loc[1]].get_state()
+            atlas_name = tile_state.name
+            atlas_num = tile_state.value
+        else:
+            placeholder = "not in grid"
+            grid_loc = placeholder
+            atlas_name = placeholder
+            atlas_num = placeholder
+
+        text = f"""DEBUG MODE
+
+game seed = {self.__seed}
+bombs on map = {self.__number_of_bombs}
+
+mouse_loc = {mouse_loc}
+grid_loc = {grid_loc}
+tile type = {atlas_name}
+atlas number = {atlas_num}
+"""
 
         # render text
         text_surf = self.__font.render(text, True, (255, 255, 255))
