@@ -183,8 +183,8 @@ class Game:
     def __count_all_bombs(self):
         for col in range(self.__grid_cols):
             for row in range(self.__grid_rows):
-                number_of_bombs = self.__count_bombs_one_tile((col, row))
-                self.__tile_grid[col][row].set_number(number_of_bombs)
+                num = self.__count_bombs_one_tile((col, row))
+                self.__tile_grid[col][row].set_number(num)
 
     def __count_bombs_one_tile(self, center_tile: tuple[int, int]) -> int:
         """
@@ -214,7 +214,7 @@ class Game:
                 if self.__tile_grid[tile_col][tile_row].has_bomb():
                     number_of_bombs += 1
 
-        print(f"tile {center_tile} as {number_of_bombs} bombs")
+        # print(f"tile {center_tile} as {number_of_bombs} bombs")
         return number_of_bombs
 
     def __place_bombs(self):
@@ -265,29 +265,29 @@ class Game:
                 # 1b. iterate through and add surrounding tiles to_reveal list
                 for x in range(-1, 2):
                     for y in range(-1, 2):
-                        print("")
                         tile_x, tile_y = tile_visit_x + x, tile_visit_y + y
-                        print(f"Should we reveal {(tile_x, tile_y)}?")
+                        # print("")
+                        # print(f"Should we reveal {(tile_x, tile_y)}?")
 
                         # skip looking at the center tile itself
                         if x == 0 and y == 0:
-                            print("\tNo, its the tile itself")
+                            # print("\tNo, its the tile itself")
                             continue
 
                         # check if tile is too low outside grid
                         elif tile_x < 0 or tile_y < 0:
-                            print("\tNo, its too low outside grid (negative)")
+                            # print("\tNo, its too low outside grid (negative)")
                             continue
 
                         # check if tile is too high outside grid
                         elif tile_x >= self.__grid_cols or tile_y >= self.__grid_rows:
-                            print(
-                                "\tNo, its too high outside grid (greater than rows/cols)"
-                            )
+                            # print(
+                            #     "\tNo, its too high outside grid (greater than rows/cols)"
+                            # )
                             continue
 
                         # add to to_reveal list
-                        print("\tYes, its valid.")
+                        # print("\tYes, its valid.")
                         tile_coord = (tile_x, tile_y)
                         if tile_coord not in tiles_to_reveal:
                             tiles_to_reveal.append(tile_coord)
