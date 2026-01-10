@@ -13,7 +13,7 @@ TILE_SCALE = 4
 TILE_SIZE = (16, 16)
 TILE_RENDER_SIZE = (TILE_SIZE[0] * TILE_SCALE, TILE_SIZE[1] * TILE_SCALE)
 TILE_PATH = "assets/asperite_files/basic-tileset.png"
-FPS = 60
+FPS = 30
 
 DEBUG_TEXTURES = False
 
