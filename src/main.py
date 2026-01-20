@@ -78,8 +78,8 @@ def main():
         screen.fill("black")
 
         # call update and draw
-        grid.__all_tiles.update()
-        grid.__all_tiles.draw(screen)
+        grid.all_tiles.update()
+        grid.all_tiles.draw(screen)
         #
 
         pg.display.flip()
