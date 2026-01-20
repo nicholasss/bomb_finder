@@ -19,13 +19,13 @@ class Grid:
     def __init__(
         self,
         tileset: Tileset,
-        tile_render_size: tuple[float, float],
+        tile_render_size: tuple[int, int],
         screen: pg.Surface,
         numb_of_bombs: int,
         rng: random.Random,
         font: pg.Font,
         grid_size: tuple[int, int],
-        grid_topleft: tuple[float, float] = (0, 0),
+        grid_topleft: tuple[int, int] = (0, 0),
         debug_mode: bool = False,
     ):
         if debug_mode:
