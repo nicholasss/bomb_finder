@@ -24,7 +24,7 @@ class TileSprite(pg.sprite.Sprite):
         self.__tileset = tileset
 
         # Tile internal state
-        self.__neighboring_bombs = 0
+        self.__num_neighbors = 0
         self.__has_bomb = False
         self.__was_clicked = False
         self.__is_selected = False
@@ -60,3 +60,15 @@ class TileSprite(pg.sprite.Sprite):
 
     def perform_left_deselect(self):
         self.__is_selected = False
+
+    def place_bomb(self):
+        self.__has_bomb = True
+
+    def has_bomb(self):
+        return self.__has_bomb
+
+    def is_empty(self):
+        return not self.__has_bomb
+
+    def set_neighbors(self, num_neighbors: int):
+        self.__num_neighbors = num_neighbors
