@@ -25,22 +25,21 @@ class Grid:
         screen: pg.Surface,
         numb_of_bombs: int,
         rng: random.Random,
+        font: pg.Font,
         grid_size: tuple[int, int],
         grid_topleft: tuple[float, float] = (0, 0),
         debug_mode: bool = False,
-        font: pg.Font = pg.font.Font(
-            "./assets/fonts/SourceSansPro/SourcingSansPro-Regular.ttf", 30
-        ),
     ):
+        print("DEBUG: Creating instance of Grid")
         self.__tileset = tileset
         self.__tile_render_width, self.__tile_render_height = tile_render_size
         self.__screen = screen
         self.__num_of_bombs = numb_of_bombs
         self.__rng = rng
         self.__grid_size = grid_size
+        self.__font = font
         self.__grid_topleft = grid_topleft
         self.__debug_mode = debug_mode
-        self.__font = font
 
         # Grid
         self.__grid_left, self.__grid_top = self.__grid_topleft
@@ -54,13 +53,17 @@ class Grid:
         self.__unrevealed_tiles = pg.sprite.Group()
 
         # Initialization methods
+        print("DEBUG: Beginning initialization")
         self.__create_grid()
+        print("DEBUG: Created grid")
         self.__place_bombs()
+        print("DEBUG: Placed bombs")
         self.__count_bombs()
+        print("DEBUG: Counted bombs")
 
         # DEBUG
-        if self.__debug_mode:
-            print("DEBUG: Grid has been initialized successfully.")
+        # if self.__debug_mode:
+        print("DEBUG: Grid has been initialized successfully.")
 
     def __create_grid(self):
         """

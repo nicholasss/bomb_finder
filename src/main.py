@@ -1,7 +1,9 @@
+import random
 import pygame as pg
 
 from tileset import Tileset
 from game import Game
+from grid import Grid
 
 # General
 NAME = "Bomb Finder"
@@ -51,6 +53,37 @@ def main():
     #     grid_top_left_corner,
     #     DEBUG_GAME,
     # )
+
+    # TESTING FOR NEW GRID CLASS
+    grid = Grid(
+        tileset,
+        TILE_RENDER_SIZE,
+        screen,
+        DEFAULT_NUMBER_BOMBS,
+        random.Random(DEFAULT_SEED),
+        font,
+        DEFAULT_GRID_SIZE,
+        grid_top_left_corner,
+        DEBUG_GAME,
+    )
+
+    test_running = True
+    while test_running:
+        pg.display.set_caption(f"FPS {int(clock.get_fps())} | {clock.get_time()}")
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                test_running = False
+
+        screen.fill("black")
+
+        # call update and draw
+        grid.__all_tiles.update()
+        grid.__all_tiles.draw(screen)
+        #
+
+        pg.display.flip()
+        clock.tick(FPS)
 
     # create new game screen
 
