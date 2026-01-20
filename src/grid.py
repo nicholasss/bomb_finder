@@ -5,8 +5,6 @@ from tile_sprite import TileSprite
 from utility import calculate_neighbors
 
 
-# TODO: Test out rendering
-
 # TODO: Once a tile has been clicked, remove it the group of unclicked tiles to stop rendered every frame
 
 
