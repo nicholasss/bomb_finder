@@ -7,6 +7,8 @@ from utility import calculate_neighbors
 
 # TODO: Test out rendering
 
+# TODO: Once a tile has been clicked, remove it the group of unclicked tiles to stop rendered every frame
+
 
 class Grid:
     """
@@ -45,8 +47,13 @@ class Grid:
         self.__grid_cols = grid_size[0]
         self.__grid_rows = grid_size[1]
         self.__tile_grid: list[list[TileSprite]] = []
-        self.__tile_group = pg.sprite.Group()
 
+        # Tile groups
+        self.__all_tiles = pg.sprite.Group()
+        self.__revealed_tiles = pg.sprite.Group()
+        self.__unrevealed_tiles = pg.sprite.Group()
+
+        # Initialization methods
         self.__create_grid()
         self.__place_bombs()
         self.__count_bombs()
