@@ -38,40 +38,40 @@ class TileType(Enum):
 
 class Tileset:
     def __init__(self, path, tile_size=(16, 16), scale=4):
-        self.path: str = path
-        self.tile_size: tuple[int, int] = tile_size
-        self.tiles: list[pg.Surface] = []
-        self.scale: int = scale
+        self.__path: str = path
+        self.__tile_size: tuple[int, int] = tile_size
+        self.__tiles: list[pg.Surface] = []
+        self.__scale: int = scale
 
         # processing
-        self.image: pg.Surface = pg.image.load(self.path).convert()
-        self.rect: pg.Rect = self.image.get_rect()
-        self.og_height_px: int = self.image.height
-        self.og_width_px: int = self.image.width
+        self.__image: pg.Surface = pg.image.load(self.__path).convert()
+        self.__rect: pg.Rect = self.__image.get_rect()
+        self.__og_image_height_px: int = self.__image.height
+        self.__og_image_width_px: int = self.__image.width
 
         # calling methods
         self.__make_tiles()
         self.__scale_by(scale)
 
     def __make_tiles(self):
-        self.tiles = []
-        tile_width = self.tile_size[0]
-        tile_height = self.tile_size[1]
+        self.__tiles = []
+        tile_width = self.__tile_size[0]
+        tile_height = self.__tile_size[1]
 
         # iterates from top left corner, to top right corner, then down a row
-        for row in range(0, self.rect.height, tile_height):
-            for col in range(0, self.rect.width, tile_width):
-                tile_image = pg.Surface(self.tile_size)
-                tile_image.blit(self.image, (0, 0), (col, row, *self.tile_size))
-                self.tiles.append(tile_image.convert())
+        for row in range(0, self.__rect.height, tile_height):
+            for col in range(0, self.__rect.width, tile_width):
+                tile_image = pg.Surface(self.__tile_size)
+                tile_image.blit(self.__image, (0, 0), (col, row, *self.__tile_size))
+                self.__tiles.append(tile_image.convert())
 
     def __scale_by(self, scale):
-        self.tiles = [
+        self.__tiles = [
             pg.transform.scale(
                 tile, (int(tile.get_width() * scale), int(tile.get_height() * scale))
             ).convert()
-            for tile in self.tiles
+            for tile in self.__tiles
         ]
 
     def get_tile(self, type: TileType) -> pg.Surface:
-        return self.tiles[type.value]
+        return self.__tiles[type.value]
