@@ -2,6 +2,7 @@ import random
 import pygame as pg
 from tileset import TileType, Tileset
 from tile import Tile
+from tile_sprite import TileSprite
 
 
 class Game:
