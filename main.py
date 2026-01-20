@@ -15,6 +15,9 @@ TILE_RENDER_SIZE = (TILE_SIZE[0] * TILE_SCALE, TILE_SIZE[1] * TILE_SCALE)
 TILE_PATH = "assets/asperite_files/basic-tileset.png"
 FPS = 60
 
+# Font
+SOURCE_FONT_PATH = "./assets/fonts/SourceSansPro/SourcingSansPro-Regular.ttf"
+
 # Debug
 DEBUG_GAME = True
 
@@ -25,10 +28,14 @@ DEFAULT_NUMBER_BOMBS = 3
 
 
 def main():
+    # Initialization
     pg.init()
     screen = pg.display.set_mode(SCREEN_SIZE)
-    pg.display.set_caption(NAME)
     clock = pg.time.Clock()
+    font = pg.font.Font(SOURCE_FONT_PATH, 30)
+
+    # Start rendering
+    pg.display.set_caption(NAME)
     pg.display.update()
 
     grid_top_left_corner = (100, 100)
