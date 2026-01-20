@@ -49,7 +49,8 @@ class Grid:
         self.__count_bombs()
 
         # DEBUG
-        print("DEBUG: Grid Group")
+        if self.__debug_mode:
+            print("DEBUG: Grid has been initialized successfully.")
 
     def __create_grid(self):
         """
