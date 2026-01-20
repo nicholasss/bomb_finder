@@ -105,7 +105,7 @@ class Grid:
             tile = self.__tile_grid[bomb_col][bomb_row]
             if tile.is_empty():
                 tile.place_bomb()
-                placed_bombs -= 1
+                placed_bombs += 1
             elif tile.has_bomb():
                 continue
 
