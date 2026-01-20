@@ -44,7 +44,7 @@ class Tileset:
         self.scale: int = scale
 
         # processing
-        self.image: pg.Surface = pg.image.load(self.path)
+        self.image: pg.Surface = pg.image.load(self.path).convert()
         self.rect: pg.Rect = self.image.get_rect()
         self.og_height_px: int = self.image.height
         self.og_width_px: int = self.image.width
