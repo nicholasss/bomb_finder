@@ -50,10 +50,10 @@ class Tileset:
         self.og_width_px: int = self.image.width
 
         # calling methods
-        self.make_tiles()
-        self.scale_by(scale)
+        self.__make_tiles()
+        self.__scale_by(scale)
 
-    def make_tiles(self):
+    def __make_tiles(self):
         self.tiles = []
         tile_width = self.tile_size[0]
         tile_height = self.tile_size[1]
@@ -63,13 +63,13 @@ class Tileset:
             for col in range(0, self.rect.width, tile_width):
                 tile_image = pg.Surface(self.tile_size)
                 tile_image.blit(self.image, (0, 0), (col, row, *self.tile_size))
-                self.tiles.append(tile_image)
+                self.tiles.append(tile_image.convert())
 
-    def scale_by(self, scale):
+    def __scale_by(self, scale):
         self.tiles = [
             pg.transform.scale(
                 tile, (int(tile.get_width() * scale), int(tile.get_height() * scale))
-            )
+            ).convert()
             for tile in self.tiles
         ]
 
