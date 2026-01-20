@@ -30,7 +30,10 @@ class Grid:
         grid_topleft: tuple[float, float] = (0, 0),
         debug_mode: bool = False,
     ):
-        print("DEBUG: Creating instance of Grid")
+        if self.__debug_mode:
+            print("DEBUG: Creating instance of Grid")
+
+        # Properties
         self.__tileset = tileset
         self.__tile_render_width, self.__tile_render_height = tile_render_size
         self.__screen = screen
@@ -41,29 +44,27 @@ class Grid:
         self.__grid_topleft = grid_topleft
         self.__debug_mode = debug_mode
 
+        # Tile groups
+        self.all_tiles = pg.sprite.Group()
+        self.revealed_tiles = pg.sprite.Group()
+        self.unrevealed_tiles = pg.sprite.Group()
+
         # Grid
         self.__grid_left, self.__grid_top = self.__grid_topleft
         self.__grid_cols = grid_size[0]
         self.__grid_rows = grid_size[1]
         self.__tile_grid: list[list[TileSprite]] = []
 
-        # Tile groups
-        self.__all_tiles = pg.sprite.Group()
-        self.__revealed_tiles = pg.sprite.Group()
-        self.__unrevealed_tiles = pg.sprite.Group()
-
         # Initialization methods
-        print("DEBUG: Beginning initialization")
+        if self.__debug_mode:
+            print("DEBUG: Beginning initialization")
         self.__create_grid()
-        print("DEBUG: Created grid")
         self.__place_bombs()
-        print("DEBUG: Placed bombs")
         self.__count_bombs()
-        print("DEBUG: Counted bombs")
 
         # DEBUG
-        # if self.__debug_mode:
-        print("DEBUG: Grid has been initialized successfully.")
+        if self.__debug_mode:
+            print("DEBUG: Grid has been initialized successfully.")
 
     def __create_grid(self):
         """
@@ -78,7 +79,9 @@ class Grid:
             for row in range(self.__grid_rows):
                 tile_x = self.__grid_left + ((col + 1) * self.__tile_render_width)
                 tile_y = self.__grid_top + ((row + 1) * self.__tile_render_height)
-                self.__tile_grid[col].append(TileSprite(self.__tileset, tile_x, tile_y))
+                new_tile = TileSprite(self.__tileset, tile_x, tile_y)
+                self.all_tiles.add(new_tile)
+                self.__tile_grid[col].append(new_tile)
 
     def __place_bombs(self):
         """
@@ -87,6 +90,12 @@ class Grid:
 
         placed_bombs = 0
         while placed_bombs < self.__num_of_bombs:
+            # DEBUG
+            if self.__debug_mode:
+                print(
+                    f"DEBUG: Bombs needed: {self.__num_of_bombs}, Bombs placed: {placed_bombs}"
+                )
+
             # should never calculate outside of grid
             bomb_col, bomb_row = (
                 self.__rng.randint(0, self.__grid_cols - 1),
@@ -100,9 +109,9 @@ class Grid:
             elif tile.has_bomb():
                 continue
 
-        # DEBUG
+        # WARNING
         if placed_bombs != self.__num_of_bombs:
-            print("DEBUG: Error with number of bombs placed.")
+            print("WARNING: Error with number of bombs placed.")
 
     def __count_bombs(self):
         """
