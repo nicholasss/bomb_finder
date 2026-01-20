@@ -34,16 +34,16 @@ def main():
     grid_top_left_corner = (100, 100)
     tileset = Tileset(TILE_PATH, TILE_SIZE, TILE_SCALE)
 
-    game = Game(
-        tileset,
-        TILE_RENDER_SIZE,
-        screen,
-        DEFAULT_NUMBER_BOMBS,
-        DEFAULT_SEED,
-        DEFAULT_GRID_SIZE,
-        grid_top_left_corner,
-        DEBUG_GAME,
-    )
+    # game = Game(
+    #     tileset,
+    #     TILE_RENDER_SIZE,
+    #     screen,
+    #     DEFAULT_NUMBER_BOMBS,
+    #     DEFAULT_SEED,
+    #     DEFAULT_GRID_SIZE,
+    #     grid_top_left_corner,
+    #     DEBUG_GAME,
+    # )
 
     # create new game screen
 
@@ -52,7 +52,7 @@ def main():
     # load the tile types
 
     # Main game loop
-    game.start_game(clock, FPS)
+    # game.start_game(clock, FPS)
 
     # exiting event loop to exit
     pg.quit()
