@@ -30,7 +30,7 @@ class Grid:
         grid_topleft: tuple[float, float] = (0, 0),
         debug_mode: bool = False,
     ):
-        if self.__debug_mode:
+        if debug_mode:
             print("DEBUG: Creating instance of Grid")
 
         # Properties
