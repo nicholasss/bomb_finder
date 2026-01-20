@@ -10,6 +10,7 @@ def calculate_neighbors(
     """
     Counts the bombs surrounding the tile in the center.
     """
+
     number_of_bombs = 0
     center_col, center_row = center_tile
 
@@ -36,3 +37,55 @@ def calculate_neighbors(
 
     # print(f"tile {center_tile} as {number_of_bombs} bombs")
     return number_of_bombs
+
+
+def click_to_tile_coord(
+    click_coord: tuple[int, int],
+    grid_topleft: tuple[int, int],
+    tile_render_size: tuple[int, int],
+) -> tuple[int, int]:
+    """
+    Converts screen coordinates to tile grid coordinates.
+    """
+
+    # Unpacking tuples
+    click_x, click_y = click_coord
+    grid_left, grid_top = grid_topleft
+    tile_width, tile_height = tile_render_size
+
+    # Click position relative to the tile grid
+    rel_click_x, rel_click_y = (
+        click_x - grid_left,
+        click_y - grid_top,
+    )
+
+    # Floor divide the click position to find the tile coordinates
+    tile_col, tile_row = (
+        rel_click_x // tile_width,
+        rel_click_y // tile_height,
+    )
+
+    return (tile_col, tile_row)
+
+
+def was_click_inside_grid(
+    tile_clicked: tuple[int, int], grid_size: tuple[int, int]
+) -> bool:
+    """
+    Will provide a boolean to indicate whether the tile that was clicked, was inside the grid or not.
+
+    Useful to prevent IndexErrors when accessing elements in a matrix directly.
+    """
+
+    # Unpacking tuples
+    tile_clicked_col, tile_clicked_row = tile_clicked
+    grid_cols, grid_rows = grid_size
+
+    # Is outside grid?
+    if tile_clicked_col < 0 or tile_clicked_row < 0:
+        return False
+    elif tile_clicked_col >= grid_cols or tile_clicked_row >= grid_rows:
+        return False
+
+    # If not, then it is inside the grid
+    return True
