@@ -44,8 +44,8 @@ class Grid:
 
         # Tile groups
         self.all_tiles = pg.sprite.Group()
-        self.revealed_tiles = pg.sprite.Group()
-        self.unrevealed_tiles = pg.sprite.Group()
+        # self.revealed_tiles = pg.sprite.Group()
+        # self.unrevealed_tiles = pg.sprite.Group()
 
         # Grid
         self.__grid_left, self.__grid_top = self.__grid_topleft
@@ -78,6 +78,7 @@ class Grid:
                 tile_x = self.__grid_left + ((col + 1) * self.__tile_render_width)
                 tile_y = self.__grid_top + ((row + 1) * self.__tile_render_height)
                 new_tile = TileSprite(self.__tileset, tile_x, tile_y)
+
                 self.all_tiles.add(new_tile)
                 self.__tile_grid[col].append(new_tile)
 
