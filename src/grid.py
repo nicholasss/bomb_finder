@@ -5,6 +5,9 @@ from tile_sprite import TileSprite
 from utility import calculate_neighbors
 
 
+# TODO: Test out rendering
+
+
 class Grid:
     """
     Grid is a sub-class of the pygame Group class, and will handle creation of the grid, management of the tile sprites,
