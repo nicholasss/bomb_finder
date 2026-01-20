@@ -13,10 +13,10 @@ TILE_SCALE = 4
 TILE_SIZE = (16, 16)
 TILE_RENDER_SIZE = (TILE_SIZE[0] * TILE_SCALE, TILE_SIZE[1] * TILE_SCALE)
 TILE_PATH = "assets/asperite_files/basic-tileset.png"
-FPS = 30
+FPS = 60
 
 # Debug
-DEBUG_GAME = False
+DEBUG_GAME = True
 
 # Games
 DEFAULT_GRID_SIZE = (6, 6)

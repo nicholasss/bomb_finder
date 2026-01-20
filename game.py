@@ -105,6 +105,9 @@ class Game:
 
             # 3a. debug mode
             if self.__debug_mode:
+                pg.display.set_caption(
+                    f"FPS {int(game_clock.get_fps())} | {game_clock.get_time()}"
+                )
                 self.__render_debug_overlay()
 
             # 4. Update display
