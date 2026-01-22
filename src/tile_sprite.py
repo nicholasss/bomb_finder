@@ -69,15 +69,17 @@ class TileSprite(pg.sprite.Sprite):
             )
         # NOTE: Could add additional warninga here to check for known state?
 
+        if self.__has_bomb:
+            # TODO: Only the first frame of the bomb
+            self.__tile_type = TileType.BOMB_A
+            return
+
+        # Tile does not have a bomb
         if self.__num_neighbors == 0:
             self.__tile_type = TileType.CLICKED_EMPTY
 
         elif self.__num_neighbors >= 1:
             self.__tile_type = TileType(self.__num_neighbors + 1)
-
-        elif self.__has_bomb:
-            # TODO: Only the first frame of the bomb
-            self.__tile_type = TileType.BOMB_A
 
     def perform_select(self):
         # do not show blank tile if the tile was already revealed
