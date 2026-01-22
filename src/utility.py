@@ -73,6 +73,7 @@ def was_click_inside_grid(
 ) -> bool:
     """
     Will provide a boolean to indicate whether the tile that was clicked, was inside the grid or not.
+    This calculation assumes that the first argument, tile_clicked, has already converted to a (col, row) value.
 
     Useful to prevent IndexErrors when accessing elements in a matrix directly.
     """
