@@ -3,82 +3,106 @@ import pygame as pg
 from tileset import TileType, Tileset
 from tile import Tile
 from tile_sprite import TileSprite
+from grid import Grid
+from utility import click_to_tile_coord, was_click_inside_grid
 
 
 class Game:
+    """
+    Game handles the creation of the grid, and relays events to sprites and grids.
+    Additionally, it manages the game loop, saves previous moves, etc.
+    """
+
     def __init__(
         self,
         tileset: Tileset,
         tile_render_size: tuple[int, int],
         screen: pg.Surface,
-        number_of_bombs: int,
-        seed: int,
+        num_of_bombs: int,
+        rng: random.Random,
+        font: pg.Font,
         grid_size: tuple[int, int],
-        grid_top_left_corner: tuple[int, int] = (0, 0),
+        grid_topleft: tuple[int, int] = (0, 0),
         debug_mode: bool = False,
     ):
         """
         A game instance should returned a fully setup game, ready to play.
         """
-        self.__debug_mode: bool = debug_mode
 
-        self.__tileset: Tileset = tileset
-        self.__tile_render_size: tuple[int, int] = tile_render_size
-        self.__screen: pg.Surface = screen
-        self.__font: pg.Font = pg.font.SysFont(None, 30)
+        if debug_mode:
+            print("DEBUG: Creating instance of Game")
 
-        self.__grid_cols = grid_size[0]
-        self.__grid_rows = grid_size[1]
-        self.__tile_grid: list[list[Tile]] = []
+        # Properties
+        self.__tileset = tileset
+        self.__tile_render_width, self.__tile_render_height = tile_render_size
+        self.__screen = screen
+        self.__num_of_bombs = num_of_bombs
+        self.__rng = rng
+        self.__font = font
+        self.__grid_size = grid_size
+        self.__grid_topleft = grid_topleft
+        self.__debug_mode = debug_mode
 
-        # x, y of the top left corner of the grid
-        self.__grid_location_x, self.__grid_location_y = grid_top_left_corner
-
-        # number of bombs
-        self.__seed: int = seed
-        self.__number_of_bombs = number_of_bombs
-
-        # mosue status
+        # Mouse status
         self.__mouse_is_down = False
         self.__mouse_is_down_on: tuple[int, int] = (-1, -1)
 
-        # create grid
-        for col in range(self.__grid_cols):
-            self.__tile_grid.append([])
-            for _ in range(self.__grid_rows):
-                self.__tile_grid[col].append(Tile())
-
-        # seeding bombs
-        random.seed(self.__seed)
-        self.__place_bombs()
-
-        # calculate numbers
-        self.__count_all_bombs()
+        # Bomb grid
+        self.__grid = Grid(
+            self.__tileset,
+            (self.__tile_render_width, self.__tile_render_height),
+            self.__screen,
+            self.__num_of_bombs,
+            self.__rng,
+            self.__font,
+            self.__grid_size,
+            self.__grid_topleft,
+            self.__debug_mode,
+        )
 
         # complete iniialization
         print("DEBUG: Game Initialized")
 
-    def start_game(self, game_clock: pg.time.Clock, fps: int):
+    def start_game(self, clock: pg.time.Clock, fps: int):
         """
-        Start the main game loop
+        Start the main game loop.
+
+        Since this function performs rendering, we are passing in a pygame clock, and an fps variable.
         """
+        # call update and draw
+
+        pg.display.flip()
+        clock.tick(fps)
+
+        ###########
+
         continue_game = True
         while continue_game:
-            # 0. Reset tile selection
-            selected_col, selected_row = self.__mouse_is_down_on
-            if self.__click_was_inside_grid(self.__mouse_is_down_on):
-                self.__tile_grid[selected_col][selected_row].perform_left_deselect()
+            # A: Debug mode operations
+            if self.__debug_mode:
+                pg.display.set_caption(
+                    f"FPS {int(clock.get_fps())} | {clock.get_time()}"
+                )
 
-            # 1a. Handle single events
+            # TODO: Rewrite the tile selection using mouse_pos and collision detection?
+            #
+            # B: Reset tile selection
+            # selected_col, selected_row = self.__mouse_is_down_on
+            # if was_click_inside_grid(self.__mouse_is_down_on, self.__grid_size):
+            #     # deselect the tile ?
+            #     self.__tile_grid[selected_col][selected_row].perform_left_deselect()
+
+            # C: Handle single events
             for event in pg.event.get():
                 # Quit game
                 if event.type == pg.QUIT:
                     continue_game = False
 
+                # NOTE: Review after tile revealing is working
                 # Mouse click has started
-                elif event.type == pg.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        self.__mouse_is_down = True
+                # elif event.type == pg.MOUSEBUTTONDOWN:
+                #     if event.button == 1:
+                #         self.__mouse_is_down = True
 
                 # Mouse click is complete
                 elif event.type == pg.MOUSEBUTTONUP:
@@ -88,176 +112,116 @@ class Game:
                     elif event.button == 3:
                         self.__handle_flag_click(event.pos)
 
-            # 1b. Handle 'ongoing' events
-            if self.__mouse_is_down:
-                self.__mouse_is_down_on = self.__find_tile_from_coord(
-                    pg.mouse.get_pos()
-                )
+            # NOTE: Review after tile revealing is working
+            # D: Handle 'ongoing' events
+            # if self.__mouse_is_down:
+            #     self.__mouse_is_down_on = self.__find_tile_from_coord(
+            #         pg.mouse.get_pos()
+            #     )
+            #     .
+            #     if self.__click_was_inside_grid(self.__mouse_is_down_on):
+            #         selected_col, selected_row = self.__mouse_is_down_on
+            #         self.__tile_grid[selected_col][selected_row].perform_select()
 
-                if self.__click_was_inside_grid(self.__mouse_is_down_on):
-                    selected_col, selected_row = self.__mouse_is_down_on
-                    self.__tile_grid[selected_col][selected_row].perform_select()
-
-            # 2. clear the screen
+            # TODO: Clear the screen with a tileset specified background color
+            # E: Clear the screen
             self.__screen.fill("black")
 
-            # 3. Render the grid
-            self.__render_grid()
+            # F: Render the grid
+            self.__grid.all_tiles.update()
+            self.__grid.all_tiles.draw(self.__screen)
 
-            # 3a. debug mode
+            # G: Debug rendering
             if self.__debug_mode:
-                pg.display.set_caption(
-                    f"FPS {int(game_clock.get_fps())} | {game_clock.get_time()}"
-                )
-                self.__render_debug_overlay()
+                # self.__render_debug_overlay()
+                pass
 
-            # 4. Update display
+            # H. Update display
             pg.display.flip()
 
-            # 5. Limit the frame rate
-            game_clock.tick(fps)
+            # I. Limit the frame rate
+            clock.tick(fps)
 
-    def __render_grid(self):
-        """
-        Renders the grid during every frame
-        """
-        for x in range(self.__grid_cols):
-            for y in range(self.__grid_rows):
-                tile_corner_x, tile_corner_y = (
-                    (self.__tile_render_size[0] * x),
-                    (self.__tile_render_size[1] * y),
-                )
+    # def __render_grid(self):
+    #    """
+    #    Renders the grid during every frame
+    #    """
+    #    for x in range(self.__grid_cols):
+    #        for y in range(self.__grid_rows):
+    #            tile_corner_x, tile_corner_y = (
+    #                (self.__tile_render_size[0] * x),
+    #                (self.__tile_render_size[1] * y),
+    #            )
 
-                # offset the grid by the topleft corner
-                tile_loc = (
-                    tile_corner_x + self.__grid_location_x,
-                    tile_corner_y + self.__grid_location_y,
-                )
+    #            # offset the grid by the topleft corner
+    #            tile_loc = (
+    #                tile_corner_x + self.__grid_location_x,
+    #                tile_corner_y + self.__grid_location_y,
+    #            )
 
-                tile_state = self.__tile_grid[x][y].get_state()
+    #            tile_state = self.__tile_grid[x][y].get_state()
 
-                self.__screen.blit(self.__tileset.get_tile(tile_state), tile_loc)
+    #            self.__screen.blit(self.__tileset.get_tile(tile_state), tile_loc)
 
-                # debug mode
-                if self.__debug_mode:
-                    text = f"{self.__tile_grid[x][y].get_number()}"
-                    if self.__tile_grid[x][y].has_bomb():
-                        text = "B"
+    #            # debug mode
+    #            if self.__debug_mode:
+    #                text = f"{self.__tile_grid[x][y].get_number()}"
+    #                if self.__tile_grid[x][y].has_bomb():
+    #                    text = "B"
 
-                    num_text = self.__font.render(text, True, "black")
-                    num_rect = num_text.get_rect()
+    #                num_text = self.__font.render(text, True, "black")
+    #                num_rect = num_text.get_rect()
 
-                    margin = 15
-                    num_loc = tile_loc[0] + margin, tile_loc[1] + margin
-                    self.__screen.blit(num_text, num_loc, num_rect)
+    #                margin = 15
+    #                num_loc = tile_loc[0] + margin, tile_loc[1] + margin
+    #                self.__screen.blit(num_text, num_loc, num_rect)
 
-    def __render_debug_overlay(self):
-        # NOTE: gave up on window position calculations
-        # top left corner
-        win_left = 350
-        win_top = 30
-        win_width = 750
-        win_height = 400
+    # def __render_debug_overlay(self):
+    #    # NOTE: gave up on window position calculations
+    #    # top left corner
+    #    win_left = 350
+    #    win_top = 30
+    #    win_width = 750
+    #    win_height = 400
 
-        # pg.Rect(x, y, width, height)
-        window_rect = pg.Rect(win_left, win_top, win_width, win_height)
-        window_surf = pg.Surface((win_width, win_height), pg.SRCALPHA)
+    #    # pg.Rect(x, y, width, height)
+    #    window_rect = pg.Rect(win_left, win_top, win_width, win_height)
+    #    window_surf = pg.Surface((win_width, win_height), pg.SRCALPHA)
 
-        overlay_color = (255, 255, 255, 80)
-        pg.draw.rect(window_surf, overlay_color, window_rect)
+    #    overlay_color = (255, 255, 255, 80)
+    #    pg.draw.rect(window_surf, overlay_color, window_rect)
 
-        # debug info
-        mouse_loc = pg.mouse.get_pos()
-        grid_loc = self.__find_tile_from_coord(mouse_loc)
-        if self.__click_was_inside_grid(grid_loc):
-            tile_state = self.__tile_grid[grid_loc[0]][grid_loc[1]].get_state()
-            atlas_name = tile_state.name
-            atlas_num = tile_state.value
-        else:
-            placeholder = "not in grid"
-            grid_loc = placeholder
-            atlas_name = placeholder
-            atlas_num = placeholder
+    #    # debug info
+    #    mouse_loc = pg.mouse.get_pos()
+    #    grid_loc = self.__find_tile_from_coord(mouse_loc)
+    #    if self.__click_was_inside_grid(grid_loc):
+    #        tile_state = self.__tile_grid[grid_loc[0]][grid_loc[1]].get_state()
+    #        atlas_name = tile_state.name
+    #        atlas_num = tile_state.value
+    #    else:
+    #        placeholder = "not in grid"
+    #        grid_loc = placeholder
+    #        atlas_name = placeholder
+    #        atlas_num = placeholder
 
-        text = f"""DEBUG MODE
+    #    text = f"""DEBUG MODE
 
-game seed = {self.__seed}
-bombs on map = {self.__number_of_bombs}
+    # game seed = {self.__seed}
+    # bombs on map = {self.__number_of_bombs}
+    #
+    # mouse_loc = {mouse_loc}
+    # grid_loc = {grid_loc}
+    # tile type = {atlas_name}
+    # atlas number = {atlas_num}
+    # """
 
-mouse_loc = {mouse_loc}
-grid_loc = {grid_loc}
-tile type = {atlas_name}
-atlas number = {atlas_num}
-"""
+    # render text
+    # text_surf = self.__font.render(text, True, (255, 255, 255))
+    # text_rect = (window_rect.topleft[0] + 5, window_rect.topleft[1] + 5)
 
-        # render text
-        text_surf = self.__font.render(text, True, (255, 255, 255))
-        text_rect = (window_rect.topleft[0] + 5, window_rect.topleft[1] + 5)
+    # window_surf.blit(text_surf, text_rect)
 
-        window_surf.blit(text_surf, text_rect)
-
-        self.__screen.blit(window_surf, (win_left, win_top))
-
-    def __count_all_bombs(self):
-        for col in range(self.__grid_cols):
-            for row in range(self.__grid_rows):
-                num = self.__count_bombs_one_tile((col, row))
-                self.__tile_grid[col][row].set_number(num)
-
-    def __count_bombs_one_tile(self, center_tile: tuple[int, int]) -> int:
-        """
-        Counts the bombs surrounding the tile in the center.
-        """
-        number_of_bombs = 0
-        center_col, center_row = center_tile
-
-        for col in range(-1, 2):
-            for row in range(-1, 2):
-                # iterate through the surrounding tiles
-                tile_col, tile_row = center_col + col, center_row + row
-
-                # skip looking at the center tile itself
-                if col == 0 and row == 0:
-                    continue
-
-                # check if tile is too low outside grid
-                elif tile_col < 0 or tile_row < 0:
-                    continue
-
-                # check if tile is too high outside grid
-                elif tile_col >= self.__grid_cols or tile_row >= self.__grid_rows:
-                    continue
-
-                # check for bomb
-                if self.__tile_grid[tile_col][tile_row].has_bomb():
-                    number_of_bombs += 1
-
-        # print(f"tile {center_tile} as {number_of_bombs} bombs")
-        return number_of_bombs
-
-    def __place_bombs(self):
-        """
-        Places bombs pseudo-randomly, determined by seed and number of bombs requested.
-        """
-        bomb_coord_list = self.__make_bomb_list()
-        for col, row in bomb_coord_list:
-            self.__tile_grid[row][col].place_bomb()
-
-    def __make_bomb_list(self) -> list[tuple[int, int]]:
-        """
-        Returns a list of coordinates where bombs will be placed, without duplicates.
-        """
-        bomb_coords = []
-        while len(bomb_coords) < self.__number_of_bombs:
-            new_bomb_coord = (
-                random.randint(0, self.__grid_rows - 1),
-                random.randint(0, self.__grid_cols - 1),
-            )
-
-            if new_bomb_coord not in bomb_coords:
-                bomb_coords.append(new_bomb_coord)
-
-        return bomb_coords
+    # self.__screen.blit(window_surf, (win_left, win_top))
 
     def __make_tile_flood_reveal_list(
         self, first_tile: tuple[int, int]
@@ -379,30 +343,3 @@ atlas number = {atlas_num}
 
         # send flag event to the tile
         clicked_tile.flag_click()
-
-    def __click_was_inside_grid(self, tile_clicked: tuple[int, int]) -> bool:
-        if tile_clicked[0] < 0 or tile_clicked[1] < 0:
-            return False
-        elif tile_clicked[0] >= self.__grid_cols or tile_clicked[1] >= self.__grid_rows:
-            return False
-
-        # if neither, then it is inside the grid
-        return True
-
-    def __find_tile_from_coord(self, click_coord: tuple[int, int]) -> tuple[int, int]:
-        """
-        Converts screen coordinates to tile grid coordinates.
-        """
-        # click on the tile grid
-        click_x, click_y = (
-            click_coord[0] - self.__grid_location_x,
-            click_coord[1] - self.__grid_location_y,
-        )
-
-        # tile number, floor divide the tile rendering size
-        tile_x, tile_y = (
-            click_x // self.__tile_render_size[0],
-            click_y // self.__tile_render_size[1],
-        )
-
-        return (tile_x, tile_y)

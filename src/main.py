@@ -43,19 +43,7 @@ def main():
     grid_top_left_corner = (100, 100)
     tileset = Tileset(TILE_PATH, TILE_SIZE, TILE_SCALE)
 
-    # game = Game(
-    #     tileset,
-    #     TILE_RENDER_SIZE,
-    #     screen,
-    #     DEFAULT_NUMBER_BOMBS,
-    #     DEFAULT_SEED,
-    #     DEFAULT_GRID_SIZE,
-    #     grid_top_left_corner,
-    #     DEBUG_GAME,
-    # )
-
-    # TESTING FOR NEW GRID CLASS
-    grid = Grid(
+    game = Game(
         tileset,
         TILE_RENDER_SIZE,
         screen,
@@ -67,23 +55,36 @@ def main():
         DEBUG_GAME,
     )
 
-    test_running = True
-    while test_running:
-        pg.display.set_caption(f"FPS {int(clock.get_fps())} | {clock.get_time()}")
+    # TESTING FOR NEW GRID CLASS
+    # grid = Grid(
+    #     tileset,
+    #     TILE_RENDER_SIZE,
+    #     screen,
+    #     DEFAULT_NUMBER_BOMBS,
+    #     random.Random(DEFAULT_SEED),
+    #     font,
+    #     DEFAULT_GRID_SIZE,
+    #     grid_top_left_corner,
+    #     DEBUG_GAME,
+    # )
 
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                test_running = False
+    # test_running = True
+    # while test_running:
+    #     pg.display.set_caption(f"FPS {int(clock.get_fps())} | {clock.get_time()}")
 
-        screen.fill("black")
+    #     for event in pg.event.get():
+    #         if event.type == pg.QUIT:
+    #             test_running = False
 
-        # call update and draw
-        grid.all_tiles.update()
-        grid.all_tiles.draw(screen)
-        #
+    #     screen.fill("black")
 
-        pg.display.flip()
-        clock.tick(FPS)
+    #     # call update and draw
+    #     grid.all_tiles.update()
+    #     grid.all_tiles.draw(screen)
+    #     #
+
+    #     pg.display.flip()
+    #     clock.tick(FPS)
 
     # create new game screen
 
@@ -92,7 +93,7 @@ def main():
     # load the tile types
 
     # Main game loop
-    # game.start_game(clock, FPS)
+    game.start_game(clock, FPS)
 
     # exiting event loop to exit
     pg.quit()
