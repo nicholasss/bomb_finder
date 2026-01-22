@@ -30,7 +30,7 @@ class TileSprite(pg.sprite.Sprite):
         self.__has_bomb = False
         self.__was_clicked = False
         self.__is_selected = False
-        self.__flag_state = Flag.NO_FLAG
+        self.__prev_type = TileType.UNCLICKED
         self.__tile_type = TileType.UNCLICKED
 
         # Location of tile on screen
@@ -49,9 +49,10 @@ class TileSprite(pg.sprite.Sprite):
         `self.__tile_type`.
         """
 
-        # NOTE: Was this needed?
-        # if self.__was_clicked:
+        # if self.__is_selected:
         #     self.__tile_type = TileType.CLICKED_EMPTY
+        # elif not self.__is_selected and not self.__was_clicked:
+        #     self.__tile_type = TileType.UNCLICKED
 
         self.image = self.__tileset.get_tile(self.__tile_type)
 
@@ -104,10 +105,15 @@ class TileSprite(pg.sprite.Sprite):
         # do not show blank tile if the tile was already revealed
         if self.__was_clicked:
             return
-        self.__is_selected = True
+        # self.__is_selected = True
 
-    def perform_left_deselect(self):
-        self.__is_selected = False
+        self.__prev_type = self.__tile_type
+        self.__tile_type = TileType.CLICKED_EMPTY
+
+    def perform_deselect(self):
+        # self.__is_selected = False
+
+        self.__tile_type = self.__prev_type
 
     def place_bomb(self):
         self.__has_bomb = True

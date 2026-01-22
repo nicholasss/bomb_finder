@@ -87,6 +87,18 @@ class Grid:
 
         tile_clicked.cycle_flag()
 
+    def select_tile(self, col_row_clicked: tuple[int, int]):
+        col, row = col_row_clicked
+        tile_clicked = self.__tile_grid[col][row]
+
+        tile_clicked.perform_select()
+
+    def deselect_tile(self, col_row_clicked: tuple[int, int]):
+        col, row = col_row_clicked
+        tile_clicked = self.__tile_grid[col][row]
+
+        tile_clicked.perform_deselect()
+
     # == Private Methods ==
     def __create_grid(self):
         """

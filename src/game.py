@@ -77,14 +77,16 @@ class Game:
                 pg.display.set_caption(
                     f"FPS {int(clock.get_fps())} | {clock.get_time()}"
                 )
+                if self.__mouse_is_down:
+                    print(f"DEBUG: Tile selected->{self.__mouse_is_down_on}")
 
             # TODO: Rewrite the tile selection using mouse_pos and collision detection?
             #
             # B: Reset tile selection
-            # selected_col, selected_row = self.__mouse_is_down_on
-            # if was_click_inside_grid(self.__mouse_is_down_on, self.__grid_size):
-            #     # deselect the tile ?
-            #     self.__tile_grid[selected_col][selected_row].perform_left_deselect()
+            if self.__mouse_is_down and click_was_inside_grid(
+                self.__mouse_is_down_on, self.__grid_size
+            ):
+                self.__grid.deselect_tile(self.__mouse_is_down_on)
 
             # C: Handle single events
             for event in pg.event.get():
@@ -93,11 +95,10 @@ class Game:
                     # TODO: Exit straight away, instead of showing game over screen
                     continue_game = False
 
-                # NOTE: Review after tile revealing is working
                 # Mouse click has started
-                # elif event.type == pg.MOUSEBUTTONDOWN:
-                #     if event.button == 1:
-                #         self.__mouse_is_down = True
+                elif event.type == pg.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.__mouse_is_down = True
 
                 # Mouse click is complete
                 elif event.type == pg.MOUSEBUTTONUP:
@@ -112,7 +113,7 @@ class Game:
                                     f"GAME OVER!\n\tBomb was clicked at {col_row_clicked}"
                                 )
 
-                        # self.__mouse_is_down = False
+                        self.__mouse_is_down = False
 
                     elif event.button == 3:
                         col_row_clicked = click_to_tile_coord(
@@ -121,16 +122,14 @@ class Game:
                         if click_was_inside_grid(col_row_clicked, self.__grid_size):
                             self.__grid.flag_click(col_row_clicked)
 
-            # NOTE: Review after tile revealing is working
             # D: Handle 'ongoing' events
-            # if self.__mouse_is_down:
-            #     self.__mouse_is_down_on = self.__find_tile_from_coord(
-            #         pg.mouse.get_pos()
-            #     )
-            #     .
-            #     if self.__click_was_inside_grid(self.__mouse_is_down_on):
-            #         selected_col, selected_row = self.__mouse_is_down_on
-            #         self.__tile_grid[selected_col][selected_row].perform_select()
+            if self.__mouse_is_down:
+                self.__mouse_is_down_on = click_to_tile_coord(
+                    pg.mouse.get_pos(), self.__grid_topleft, self.__tile_render_size
+                )
+
+                if click_was_inside_grid(self.__mouse_is_down_on, self.__grid_size):
+                    self.__grid.select_tile(self.__mouse_is_down_on)
 
             # TODO: Clear the screen with a tileset specified background color
             # E: Clear the screen
