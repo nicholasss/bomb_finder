@@ -34,8 +34,8 @@ class Grid:
         self.__screen = screen
         self.__num_of_bombs = num_of_bombs
         self.__rng = rng
-        self.__grid_size = grid_size
         self.__font = font
+        self.__grid_size = grid_size
         self.__grid_topleft = grid_topleft
         self.__debug_mode = debug_mode
 
