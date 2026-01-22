@@ -22,7 +22,7 @@ class Grid:
         rng: random.Random,
         font: pg.Font,
         grid_size: tuple[int, int],
-        grid_topleft: tuple[int, int] = (0, 0),
+        grid_topleft: tuple[int, int],
         debug_mode: bool = False,
     ):
         if debug_mode:

@@ -25,6 +25,7 @@ DEBUG_GAME = True
 
 # Games
 DEFAULT_GRID_SIZE = (6, 6)
+DEFAULT_GRID_TOPLEFT = (100, 100)
 DEFAULT_SEED = 0xABCDEF1234  # All seeds should be a 10 digit hexadecimal number
 DEFAULT_NUMBER_BOMBS = 3
 
@@ -40,7 +41,6 @@ def main():
     pg.display.set_caption(NAME)
     pg.display.update()
 
-    grid_top_left_corner = (100, 100)
     tileset = Tileset(TILE_PATH, TILE_SIZE, TILE_SCALE)
 
     game = Game(
@@ -51,7 +51,7 @@ def main():
         random.Random(DEFAULT_SEED),
         font,
         DEFAULT_GRID_SIZE,
-        grid_top_left_corner,
+        DEFAULT_GRID_TOPLEFT,
         DEBUG_GAME,
     )
 
