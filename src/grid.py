@@ -131,6 +131,8 @@ class Grid:
         For every tile in the grid, call the `calculate_neighbors` function and provide the tile with the number of neighbors.
         """
 
+        # TODO: Optimize by skipping calculations for tiles that have bombs
+
         for col in range(self.__grid_cols):
             for row in range(self.__grid_rows):
                 num_neighbors = calculate_neighbors(
