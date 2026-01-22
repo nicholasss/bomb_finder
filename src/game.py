@@ -4,7 +4,7 @@ from tileset import TileType, Tileset
 from tile import Tile
 from tile_sprite import TileSprite
 from grid import Grid
-from utility import click_to_tile_coord, was_click_inside_grid
+from utility import click_to_tile_coord, click_was_inside_grid
 
 
 class Game:
@@ -34,6 +34,7 @@ class Game:
 
         # Properties
         self.__tileset = tileset
+        self.__tile_render_size = tile_render_size
         self.__tile_render_width, self.__tile_render_height = tile_render_size
         self.__screen = screen
         self.__num_of_bombs = num_of_bombs
@@ -69,13 +70,6 @@ class Game:
 
         Since this function performs rendering, we are passing in a pygame clock, and an fps variable.
         """
-        # call update and draw
-
-        pg.display.flip()
-        clock.tick(fps)
-
-        ###########
-
         continue_game = True
         while continue_game:
             # A: Debug mode operations
@@ -96,6 +90,7 @@ class Game:
             for event in pg.event.get():
                 # Quit game
                 if event.type == pg.QUIT:
+                    # TODO: Exit straight away, instead of showing game over screen
                     continue_game = False
 
                 # NOTE: Review after tile revealing is working
@@ -107,10 +102,24 @@ class Game:
                 # Mouse click is complete
                 elif event.type == pg.MOUSEBUTTONUP:
                     if event.button == 1:
-                        self.__mouse_is_down = False
-                        continue_game = self.__handle_reveal_click(event.pos)
+                        col_row_clicked = click_to_tile_coord(
+                            event.pos, self.__grid_topleft, self.__tile_render_size
+                        )
+                        if click_was_inside_grid(col_row_clicked, self.__grid_size):
+                            bomb_not_clicked = self.__grid.reveal_click(col_row_clicked)
+                            if not bomb_not_clicked:
+                                print(
+                                    f"GAME OVER!\n\tBomb was clicked at {col_row_clicked}"
+                                )
+
+                        # self.__mouse_is_down = False
+
                     elif event.button == 3:
-                        self.__handle_flag_click(event.pos)
+                        col_row_clicked = click_to_tile_coord(
+                            event.pos, self.__grid_topleft, self.__tile_render_size
+                        )
+                        if click_was_inside_grid(col_row_clicked, self.__grid_size):
+                            self.__grid.flag_click(col_row_clicked)
 
             # NOTE: Review after tile revealing is working
             # D: Handle 'ongoing' events
@@ -281,65 +290,65 @@ class Game:
 
         return tiles_to_reveal
 
-    def __handle_reveal_click(self, coord: tuple[int, int]) -> bool:
-        """
-        Take the click, call the calculation method, then pass the click to the tile.
-        The tile will change state, and then any changes to the grid should be made.
+    # def __handle_reveal_click(self, coord: tuple[int, int]) -> bool:
+    #     """
+    #     Take the click, call the calculation method, then pass the click to the tile.
+    #     The tile will change state, and then any changes to the grid should be made.
 
-        This method will return a boolean, to indicate whether to continue the game or not.
-        True: continue the game
-        False: game is over
-        """
-        clicked_tile_coord = self.__find_tile_from_coord(coord)
+    #     This method will return a boolean, to indicate whether to continue the game or not.
+    #     True: continue the game
+    #     False: game is over
+    #     """
+    #     clicked_tile_coord = self.__find_tile_from_coord(coord)
 
-        # left click was outside grid, do nothing
-        if not self.__click_was_inside_grid(clicked_tile_coord):
-            print("NYI: Left click outside of tile grid")
+    #     # left click was outside grid, do nothing
+    #     if not self.__click_was_inside_grid(clicked_tile_coord):
+    #         print("NYI: Left click outside of tile grid")
 
-            # Continue game
-            return True
+    #         # Continue game
+    #         return True
 
-        clicked_x, clicked_y = clicked_tile_coord
-        clicked_tile = self.__tile_grid[clicked_x][clicked_y]
-        tile_number = clicked_tile.get_number()
+    #     clicked_x, clicked_y = clicked_tile_coord
+    #     clicked_tile = self.__tile_grid[clicked_x][clicked_y]
+    #     tile_number = clicked_tile.get_number()
 
-        # Print debugging
-        # print(f"left click on tile ({clicked_x}, {clicked_y})")
+    #     # Print debugging
+    #     # print(f"left click on tile ({clicked_x}, {clicked_y})")
 
-        if clicked_tile.has_bomb():
-            print("NYI: Game over due to clicking on bomb")
-            clicked_tile.reveal_click()
+    #     if clicked_tile.has_bomb():
+    #         print("NYI: Game over due to clicking on bomb")
+    #         clicked_tile.reveal_click()
 
-            # End game
-            return False
+    #         # End game
+    #         return False
 
-        # Perform flood of empty tiles
-        if tile_number == 0:
-            tiles_to_flood = self.__make_tile_flood_reveal_list(clicked_tile_coord)
-            for tile_x, tile_y in tiles_to_flood:
-                self.__tile_grid[tile_x][tile_y].reveal_click()
-        # Normal Click
-        else:
-            clicked_tile.reveal_click()
+    #     # Perform flood of empty tiles
+    #     if tile_number == 0:
+    #         tiles_to_flood = self.__make_tile_flood_reveal_list(clicked_tile_coord)
+    #         for tile_x, tile_y in tiles_to_flood:
+    #             self.__tile_grid[tile_x][tile_y].reveal_click()
+    #     # Normal Click
+    #     else:
+    #         clicked_tile.reveal_click()
 
-        # Continue game, since no bomb
-        return True
+    #     # Continue game, since no bomb
+    #     return True
 
-    def __handle_flag_click(self, coord: tuple[int, int]):
-        """
-        Take the right click, call the calculation method, then pass the click to the tile.
+    # def __handle_flag_click(self, coord: tuple[int, int]):
+    #     """
+    #     Take the right click, call the calculation method, then pass the click to the tile.
 
-        The tile will then change its flag state to cycle through the two types of flags, and the blank tile.
-        """
-        tile_clicked = self.__find_tile_from_coord(coord)
+    #     The tile will then change its flag state to cycle through the two types of flags, and the blank tile.
+    #     """
+    #     tile_clicked = self.__find_tile_from_coord(coord)
 
-        # right click was outside grid, do nothing
-        if not self.__click_was_inside_grid(tile_clicked):
-            print("NYI: Right click outside of tile grid")
-            return
+    #     # right click was outside grid, do nothing
+    #     if not self.__click_was_inside_grid(tile_clicked):
+    #         print("NYI: Right click outside of tile grid")
+    #         return
 
-        clicked_x, clicked_y = tile_clicked
-        clicked_tile = self.__tile_grid[clicked_x][clicked_y]
+    #     clicked_x, clicked_y = tile_clicked
+    #     clicked_tile = self.__tile_grid[clicked_x][clicked_y]
 
-        # send flag event to the tile
-        clicked_tile.flag_click()
+    #     # send flag event to the tile
+    #     clicked_tile.flag_click()
