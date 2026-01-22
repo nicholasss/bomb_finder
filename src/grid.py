@@ -18,7 +18,7 @@ class Grid:
         tileset: Tileset,
         tile_render_size: tuple[int, int],
         screen: pg.Surface,
-        numb_of_bombs: int,
+        num_of_bombs: int,
         rng: random.Random,
         font: pg.Font,
         grid_size: tuple[int, int],
@@ -32,7 +32,7 @@ class Grid:
         self.__tileset = tileset
         self.__tile_render_width, self.__tile_render_height = tile_render_size
         self.__screen = screen
-        self.__num_of_bombs = numb_of_bombs
+        self.__num_of_bombs = num_of_bombs
         self.__rng = rng
         self.__grid_size = grid_size
         self.__font = font
