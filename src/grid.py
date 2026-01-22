@@ -61,6 +61,23 @@ class Grid:
         if self.__debug_mode:
             print("DEBUG: Grid has been initialized successfully.")
 
+    # == Public Methods ==
+    def reveal_click(self, col_row_clicked: tuple[int, int]) -> bool:
+        """
+        Provided the column and row of the tile revealed, perform the reveal of the tile, flooding neighboring tiles if empty,
+        updating the TileSprite's state as needed.
+
+        Returning `False` if the game is over due to revealing a bomb, or returning `True` if a bomb was **not** revealed
+        and the game can continue.
+        """
+
+        col, row = col_row_clicked
+        tile_clicked = self.__tile_grid[col][row]
+
+        tile_clicked.reveal()
+        return tile_clicked.is_empty()
+
+    # == Private Methods ==
     def __create_grid(self):
         """
         Creates the grid of tile sprites.
