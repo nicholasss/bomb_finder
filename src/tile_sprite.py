@@ -3,6 +3,8 @@ import pygame as pg
 from enum import Enum
 
 
+# TODO:
+# Move this Enum to the Tileset class file? or integrate into TileType?
 class Flag(Enum):
     NO_FLAG = 0
     UNCERTAIN_FLAG = 1
