@@ -68,7 +68,7 @@ def click_to_tile_coord(
     return (tile_col, tile_row)
 
 
-def was_click_inside_grid(
+def click_was_inside_grid(
     tile_clicked: tuple[int, int], grid_size: tuple[int, int]
 ) -> bool:
     """
