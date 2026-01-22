@@ -89,8 +89,8 @@ class Grid:
         for col in range(self.__grid_cols):
             self.__tile_grid.append([])
             for row in range(self.__grid_rows):
-                tile_x = self.__grid_left + ((col + 1) * self.__tile_render_width)
-                tile_y = self.__grid_top + ((row + 1) * self.__tile_render_height)
+                tile_x = self.__grid_left + (col * self.__tile_render_width)
+                tile_y = self.__grid_top + (row * self.__tile_render_height)
                 new_tile = TileSprite(self.__tileset, tile_x, tile_y)
 
                 self.all_tiles.add(new_tile)
