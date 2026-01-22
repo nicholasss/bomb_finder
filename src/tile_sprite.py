@@ -70,7 +70,8 @@ class TileSprite(pg.sprite.Sprite):
         # NOTE: Could add additional warninga here to check for known state?
 
         if self.__has_bomb:
-            # TODO: Only the first frame of the bomb
+            # TODO: Only the first frame of the bomb, needs to kick off animation somehow?
+            # Unsure where to trigger and perform the animation
             self.__tile_type = TileType.BOMB_A
             return
 
@@ -80,6 +81,24 @@ class TileSprite(pg.sprite.Sprite):
 
         elif self.__num_neighbors >= 1:
             self.__tile_type = TileType(self.__num_neighbors + 1)
+
+    def cycle_flag(self):
+        """
+        Cycle the flag state of the tile. Certain Flag -> Uncertain Flag -> Unflagged -> Certain Flag, etc.
+
+        12 = Certain Flag
+        13 = Uncertain Flag
+        0  = Unflagged
+        """
+
+        if self.__tile_type == TileType.UNCLICKED_CERTAIN:
+            self.__tile_type = TileType.UNCLICKED_UNCERTAIN
+
+        elif self.__tile_type == TileType.UNCLICKED_UNCERTAIN:
+            self.__tile_type = TileType.UNCLICKED
+
+        elif self.__tile_type == TileType.UNCLICKED:
+            self.__tile_type = TileType.UNCLICKED_CERTAIN
 
     def perform_select(self):
         # do not show blank tile if the tile was already revealed

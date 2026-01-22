@@ -77,6 +77,16 @@ class Grid:
         tile_clicked.reveal()
         return tile_clicked.has_no_bomb()
 
+    def flag_click(self, col_row_clicked: tuple[int, int]):
+        """
+        Provided the column and row of the tile being flagged (or unflagged), cycle through the flag types on the tile.
+        """
+
+        col, row = col_row_clicked
+        tile_clicked = self.__tile_grid[col][row]
+
+        tile_clicked.cycle_flag()
+
     # == Private Methods ==
     def __create_grid(self):
         """
