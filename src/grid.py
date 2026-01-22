@@ -5,15 +5,12 @@ from tile_sprite import TileSprite
 from utility import calculate_neighbors
 
 
-# TODO: Once a tile has been clicked, remove it the group of unclicked tiles to stop rendered every frame
-
-
 class Grid:
     """
-    Grid is a sub-class of the pygame Group class, and will handle creation of the grid, management of the tile sprites,
+    Grid will handle creation of the grid, management of the tile sprites, and manage the tile grid.
     and will be created and used within a instance of the Game class.
 
-    Many of the arguments within this constructor need to be instanciated before being passed in.
+    Many of the arguments within this constructor need to be instantiated before being passed in.
     """
 
     def __init__(
