@@ -75,7 +75,7 @@ class Grid:
         tile_clicked = self.__tile_grid[col][row]
 
         tile_clicked.reveal()
-        return tile_clicked.is_empty()
+        return tile_clicked.has_no_bomb()
 
     # == Private Methods ==
     def __create_grid(self):
@@ -116,7 +116,7 @@ class Grid:
             )
 
             tile = self.__tile_grid[bomb_col][bomb_row]
-            if tile.is_empty():
+            if tile.has_no_bomb():
                 tile.place_bomb()
                 placed_bombs += 1
             elif tile.has_bomb():
