@@ -49,10 +49,35 @@ class TileSprite(pg.sprite.Sprite):
         `self.__tile_type`.
         """
 
-        if self.__was_clicked:
-            self.__tile_type = TileType.CLICKED_EMPTY
+        # NOTE: Was this needed?
+        # if self.__was_clicked:
+        #     self.__tile_type = TileType.CLICKED_EMPTY
 
         self.image = self.__tileset.get_tile(self.__tile_type)
+
+    def reveal(self):
+        """
+        Reveal the tile, utilizing the internal state to change the TileType to render within the same frame.
+
+        Revealing a tile will only show an empty tile, a number, or a bomb. It will remove any flags that were on it.
+        """
+
+        # Warning debug
+        if self.__num_neighbors > 8:
+            print(
+                f"WARNING: neighboring bombs of cell at {(self.__x, self.__y)} is more than 8. neigbors with bombs->{self.__num_neighbors}"
+            )
+        # NOTE: Could add additional warninga here to check for known state?
+
+        if self.__num_neighbors == 0:
+            self.__tile_type = TileType.CLICKED_EMPTY
+
+        elif self.__num_neighbors >= 1:
+            self.__tile_type = TileType(self.__num_neighbors + 1)
+
+        elif self.__has_bomb:
+            # TODO: Only the first frame of the bomb
+            self.__tile_type = TileType.BOMB_A
 
     def perform_select(self):
         # do not show blank tile if the tile was already revealed
@@ -66,11 +91,17 @@ class TileSprite(pg.sprite.Sprite):
     def place_bomb(self):
         self.__has_bomb = True
 
-    def has_bomb(self):
+    def has_bomb(self) -> bool:
         return self.__has_bomb
 
-    def is_empty(self):
+    def has_no_bomb(self) -> bool:
         return not self.__has_bomb
 
     def set_neighbors(self, num_neighbors: int):
         self.__num_neighbors = num_neighbors
+
+    def has_no_neighbors(self) -> bool:
+        if self.__num_neighbors == 0:
+            return True
+        else:
+            return False
