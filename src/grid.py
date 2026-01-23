@@ -74,7 +74,11 @@ class Grid:
         col, row = col_row_clicked
         tile_clicked = self.__tile_grid[col][row]
 
-        tile_clicked.reveal()
+        if tile_clicked.has_no_neighbors():
+            # TODO: call flood method
+            pass
+        else:
+            tile_clicked.reveal()
         return tile_clicked.has_no_bomb()
 
     def flag_click(self, col_row_clicked: tuple[int, int]):
