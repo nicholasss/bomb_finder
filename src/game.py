@@ -41,6 +41,7 @@ class Game:
         self.__grid_size = grid_size
         self.__grid_topleft = grid_topleft
         self.__debug_mode = debug_mode
+        self.__pressed_tile: None | tuple[int, int] = None
 
         # Bomb grid
         self.__grid = Grid(
@@ -72,8 +73,6 @@ class Game:
                     f"FPS {int(clock.get_fps())} | {clock.get_time()}"
                 )
 
-            # TODO: Rewrite the tile selection using mouse_pos and collision detection?
-            #
             # B: Get mouse position
             mouse_pos = pg.mouse.get_pos()
             mouse_col_row = click_to_tile_coord(
@@ -81,15 +80,26 @@ class Game:
             )
             is_inside_grid = click_was_inside_grid(mouse_col_row, self.__grid_size)
 
+            # D: Get state of left mouse button
+            left_click_held, _, _ = pg.mouse.get_pressed()
+
             # C: Handle single events
             for event in pg.event.get():
-                # Quit game
                 if event.type == pg.QUIT:
                     # TODO: Exit straight away, instead of showing game over screen
                     continue_game = False
 
-                # Mouse click is complete
-                elif event.type == pg.MOUSEBUTTONUP:
+                # Mouse click start or in progress
+                tile_is_pressed = (
+                    event.type == pg.MOUSEBUTTONDOWN and event.button == 1
+                ) or left_click_held
+
+                if tile_is_pressed and is_inside_grid:
+                    if is_inside_grid:
+                        self.__pressed_tile = mouse_col_row
+
+                # Mouse click end
+                if event.type == pg.MOUSEBUTTONUP:
                     if event.button == 1 and is_inside_grid:
                         bomb_not_clicked = self.__grid.reveal_click(mouse_col_row)
 
@@ -97,13 +107,16 @@ class Game:
                             # TODO: Write game over menu
                             print(f"GAME OVER!\n\tBomb was clicked at {mouse_col_row}")
 
+                    # Dont press tile if the button is outside the grid
+                    if event.button == 1:
+                        self.__pressed_tile = None
+
                     elif event.button == 3 and is_inside_grid:
                         self.__grid.flag_click(mouse_col_row)
 
-            # D: Get state of left mouse button
-            # left_click_held, _, _ = pg.mouse.get_pressed()
-
             # E: Manage tile selection state
+            if self.__pressed_tile is not None and is_inside_grid:
+                self.__grid.press_tile(mouse_col_row)
 
             # TODO: Clear the screen with a tileset specified background color
             # F: Clear the screen
@@ -120,6 +133,10 @@ class Game:
 
             # I. Update display
             pg.display.flip()
+
+            # remove selection
+            if self.__pressed_tile is not None and is_inside_grid:
+                self.__grid.unpress_tile(mouse_col_row)
 
             # J. Limit the frame rate
             clock.tick(fps)

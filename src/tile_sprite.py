@@ -20,6 +20,7 @@ class TileSprite(pg.sprite.Sprite):
         self.__num_neighbors = 0
         self.__has_bomb = False
         self.__was_clicked = False
+        self.__is_pressed = False
         self.__tile_type = TileType.UNCLICKED
 
         # Location of tile on screen
@@ -38,7 +39,11 @@ class TileSprite(pg.sprite.Sprite):
         `self.__tile_type`.
         """
 
-        self.image = self.__tileset.get_tile(self.__tile_type)
+        if self.__is_pressed:
+            self.image = self.__tileset.get_tile(TileType.CLICKED_EMPTY)
+
+        else:
+            self.image = self.__tileset.get_tile(self.__tile_type)
 
     def reveal(self):
         """
@@ -92,14 +97,17 @@ class TileSprite(pg.sprite.Sprite):
         elif self.__tile_type == TileType.UNCLICKED:
             self.__tile_type = TileType.UNCLICKED_CERTAIN
 
-    # def perform_select(self):
-    #     pass
+    def press(self):
+        self.__is_pressed = True
 
-    # def perform_deselect(self):
-    #     pass
+    def unpress(self):
+        self.__is_pressed = False
 
     def place_bomb(self):
         self.__has_bomb = True
+
+    def was_clicked(self):
+        return self.__was_clicked
 
     def has_bomb(self) -> bool:
         return self.__has_bomb

@@ -87,6 +87,27 @@ class Grid:
 
         tile_clicked.cycle_flag()
 
+    def press_tile(self, col_row_clicked: tuple[int, int]):
+        """
+        Provided the column and row of a tile, change the tile to be "pressed".
+        """
+
+        col, row = col_row_clicked
+        tile_clicked = self.__tile_grid[col][row]
+
+        if not tile_clicked.was_clicked():
+            tile_clicked.press()
+
+    def unpress_tile(self, col_row_clicked: tuple[int, int]):
+        """
+        Resets the "pressed" state tile at column and row
+        """
+
+        col, row = col_row_clicked
+        tile_clicked = self.__tile_grid[col][row]
+
+        tile_clicked.unpress()
+
     # == Private Methods ==
     def __create_grid(self):
         """
