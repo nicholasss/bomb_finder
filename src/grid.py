@@ -1,6 +1,6 @@
 import random
 import pygame as pg
-from tileset import TileType, Tileset
+from tileset import Tileset
 from tile_sprite import TileSprite
 from utility import calculate_neighbors
 

@@ -3,7 +3,6 @@ import pygame as pg
 
 from tileset import Tileset
 from game import Game
-from grid import Grid
 
 # General
 NAME = "Bomb Finder"
