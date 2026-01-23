@@ -41,8 +41,6 @@ class Grid:
 
         # Tile groups
         self.all_tiles = pg.sprite.Group()
-        # self.revealed_tiles = pg.sprite.Group()
-        # self.unrevealed_tiles = pg.sprite.Group()
 
         # Grid
         self.__grid_left, self.__grid_top = self.__grid_topleft
