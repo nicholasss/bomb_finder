@@ -32,7 +32,7 @@ def calculate_neighbors(
                 continue
 
             # check for bomb
-            if grid[tile_col][tile_row].has_bomb():
+            if grid[tile_col][tile_row].has_bomb:
                 number_of_bombs += 1
 
     # print(f"tile {center_tile} as {number_of_bombs} bombs")
