@@ -66,12 +66,16 @@ class Game:
         Since this function performs rendering, we are passing in a pygame clock, and an fps variable.
         """
         continue_game = True
+        debug_timer = 0
         while continue_game:
             # A: Debug mode operations
             if self.__debug_mode:
-                pg.display.set_caption(
-                    f"FPS {int(clock.get_fps())} | {clock.get_time()}"
-                )
+                debug_timer += clock.get_time()
+                if debug_timer > 500:
+                    pg.display.set_caption(
+                        f"FPS {int(clock.get_fps())} | {clock.get_time()}"
+                    )
+                    debug_timer = 0
 
             # B: Get mouse position
             mouse_pos = pg.mouse.get_pos()
@@ -80,16 +84,16 @@ class Game:
             )
             is_inside_grid = click_was_inside_grid(mouse_col_row, self.__grid_size)
 
-            # D: Get state of left mouse button
+            # C: Get continuous state
             left_click_held, _, _ = pg.mouse.get_pressed()
 
-            # C: Handle single events
+            # D: Handle all events from during last tick
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     # TODO: Exit straight away, instead of showing game over screen
                     continue_game = False
 
-                # Mouse click start or in progress
+                # Click started from in grid
                 if (
                     event.type == pg.MOUSEBUTTONDOWN
                     and event.button == 1
@@ -97,35 +101,42 @@ class Game:
                 ):
                     self.__pressed_tile = mouse_col_row
 
-                # Mouse click end
+                # Click ended
                 if event.type == pg.MOUSEBUTTONUP:
-                    if event.button == 1 and is_inside_grid:
-                        bomb_not_clicked = self.__grid.reveal_click(mouse_col_row)
-
-                        if not bomb_not_clicked:
-                            # TODO: Write game over menu
-                            print(f"GAME OVER!\n\tBomb was clicked at {mouse_col_row}")
-
                     if event.button == 1:
+                        if is_inside_grid:
+                            bomb_not_clicked = self.__grid.reveal_click(mouse_col_row)
+
+                            # Bomb was clicked!
+                            if not bomb_not_clicked:
+                                # TODO: Write game over menu
+                                print(
+                                    f"GAME OVER!\n\tBomb was clicked at {mouse_col_row}"
+                                )
+
+                        # Always reset if left mouse button was pressed
                         self.__pressed_tile = None
 
+                    # Flaging tiles
                     elif event.button == 3 and is_inside_grid:
                         self.__grid.flag_click(mouse_col_row)
 
+            # E: Manage "held press" tile state
             if left_click_held and is_inside_grid:
                 self.__pressed_tile = mouse_col_row
 
-            # E: Manage tile selection state
+            # F: Pass pressed_tile state to grid
             if self.__pressed_tile is not None and is_inside_grid:
                 self.__grid.press_tile(self.__pressed_tile)
-            elif self.__pressed_tile is not None and not is_inside_grid:
-                self.__pressed_tile = None
+
+                # Reset pressed_tile if mouse is outside grid
+                if not is_inside_grid:
+                    self.__pressed_tile = None
 
             # TODO: Clear the screen with a tileset specified background color
-            # F: Clear the screen
+            #
+            # G: Render frame
             self.__screen.fill("black")
-
-            # G: Render the grid
             self.__grid.all_tiles.update()
             self.__grid.all_tiles.draw(self.__screen)
 
@@ -134,14 +145,14 @@ class Game:
                 # self.__render_debug_overlay()
                 pass
 
-            # I. Update display
+            # I: Update display
             pg.display.flip()
 
-            # remove selection
+            # J: Unpress the tile after rendering
             if self.__pressed_tile is not None and is_inside_grid:
                 self.__grid.unpress_tile(self.__pressed_tile)
 
-            # J. Limit the frame rate
+            # K. Limit the frame rate
             clock.tick(fps)
 
     # def __render_grid(self):
