@@ -90,13 +90,12 @@ class Game:
                     continue_game = False
 
                 # Mouse click start or in progress
-                tile_is_pressed = (
-                    event.type == pg.MOUSEBUTTONDOWN and event.button == 1
-                ) or left_click_held
-
-                if tile_is_pressed and is_inside_grid:
-                    if is_inside_grid:
-                        self.__pressed_tile = mouse_col_row
+                if (
+                    event.type == pg.MOUSEBUTTONDOWN
+                    and event.button == 1
+                    and is_inside_grid
+                ):
+                    self.__pressed_tile = mouse_col_row
 
                 # Mouse click end
                 if event.type == pg.MOUSEBUTTONUP:
@@ -107,16 +106,20 @@ class Game:
                             # TODO: Write game over menu
                             print(f"GAME OVER!\n\tBomb was clicked at {mouse_col_row}")
 
-                    # Dont press tile if the button is outside the grid
                     if event.button == 1:
                         self.__pressed_tile = None
 
                     elif event.button == 3 and is_inside_grid:
                         self.__grid.flag_click(mouse_col_row)
 
+            if left_click_held and is_inside_grid:
+                self.__pressed_tile = mouse_col_row
+
             # E: Manage tile selection state
             if self.__pressed_tile is not None and is_inside_grid:
-                self.__grid.press_tile(mouse_col_row)
+                self.__grid.press_tile(self.__pressed_tile)
+            elif self.__pressed_tile is not None and not is_inside_grid:
+                self.__pressed_tile = None
 
             # TODO: Clear the screen with a tileset specified background color
             # F: Clear the screen
@@ -136,7 +139,7 @@ class Game:
 
             # remove selection
             if self.__pressed_tile is not None and is_inside_grid:
-                self.__grid.unpress_tile(mouse_col_row)
+                self.__grid.unpress_tile(self.__pressed_tile)
 
             # J. Limit the frame rate
             clock.tick(fps)
