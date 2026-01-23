@@ -18,8 +18,8 @@ class TileSprite(pg.sprite.Sprite):
 
         # Tile internal state
         self.__num_neighbors = 0
-        self.__has_bomb = False
-        self.__was_clicked = False
+        self.has_bomb = False
+        self.was_clicked = False
         self.__is_pressed = False
         self.__tile_type = TileType.UNCLICKED
 
@@ -53,11 +53,11 @@ class TileSprite(pg.sprite.Sprite):
         """
 
         # Only is set to true below, prevents running the same method again
-        if self.__was_clicked:
+        if self.was_clicked:
             return
 
         # adjust simple state first
-        self.__was_clicked = True
+        self.was_clicked = True
 
         # Warning debug
         if self.__num_neighbors > 8:
@@ -66,7 +66,7 @@ class TileSprite(pg.sprite.Sprite):
             )
         # NOTE: Could add additional warninga here to check for known state?
 
-        if self.__has_bomb:
+        if self.has_bomb:
             # TODO: Only the first frame of the bomb, needs to kick off animation somehow?
             # Unsure where to trigger and perform the animation
             self.__tile_type = TileType.BOMB_A
@@ -104,16 +104,10 @@ class TileSprite(pg.sprite.Sprite):
         self.__is_pressed = False
 
     def place_bomb(self):
-        self.__has_bomb = True
-
-    def was_clicked(self):
-        return self.__was_clicked
-
-    def has_bomb(self) -> bool:
-        return self.__has_bomb
+        self.has_bomb = True
 
     def has_no_bomb(self) -> bool:
-        return not self.__has_bomb
+        return not self.has_bomb
 
     def set_neighbors(self, num_neighbors: int):
         self.__num_neighbors = num_neighbors

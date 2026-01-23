@@ -95,7 +95,7 @@ class Grid:
         col, row = col_row_clicked
         tile_clicked = self.__tile_grid[col][row]
 
-        if not tile_clicked.was_clicked():
+        if not tile_clicked.was_clicked:
             tile_clicked.press()
 
     def unpress_tile(self, col_row_clicked: tuple[int, int]):
@@ -150,7 +150,7 @@ class Grid:
             if tile.has_no_bomb():
                 tile.place_bomb()
                 placed_bombs += 1
-            elif tile.has_bomb():
+            elif tile.has_bomb:
                 continue
 
         # WARNING
