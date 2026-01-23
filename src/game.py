@@ -1,8 +1,6 @@
 import random
 import pygame as pg
-from tileset import TileType, Tileset
-from tile import Tile
-from tile_sprite import TileSprite
+from tileset import Tileset
 from grid import Grid
 from utility import click_to_tile_coord, click_was_inside_grid
 

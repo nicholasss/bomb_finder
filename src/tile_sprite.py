@@ -1,14 +1,5 @@
 from tileset import TileType, Tileset
 import pygame as pg
-from enum import Enum
-
-
-# TODO:
-# Move this Enum to the Tileset class file? or integrate into TileType?
-class Flag(Enum):
-    NO_FLAG = 0
-    UNCERTAIN_FLAG = 1
-    CERTAIN_FLAG = 2
 
 
 class TileSprite(pg.sprite.Sprite):
