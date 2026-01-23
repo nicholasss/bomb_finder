@@ -44,10 +44,6 @@ class Game:
         self.__grid_topleft = grid_topleft
         self.__debug_mode = debug_mode
 
-        # Mouse status
-        self.__mouse_is_down = False
-        self.__mouse_is_down_on: tuple[int, int] = (-1, -1)
-
         # Bomb grid
         self.__grid = Grid(
             self.__tileset,
@@ -77,16 +73,15 @@ class Game:
                 pg.display.set_caption(
                     f"FPS {int(clock.get_fps())} | {clock.get_time()}"
                 )
-                if self.__mouse_is_down:
-                    print(f"DEBUG: Tile selected->{self.__mouse_is_down_on}")
 
             # TODO: Rewrite the tile selection using mouse_pos and collision detection?
             #
-            # B: Reset tile selection
-            if self.__mouse_is_down and click_was_inside_grid(
-                self.__mouse_is_down_on, self.__grid_size
-            ):
-                self.__grid.deselect_tile(self.__mouse_is_down_on)
+            # B: Get mouse position
+            mouse_pos = pg.mouse.get_pos()
+            mouse_col_row = click_to_tile_coord(
+                mouse_pos, self.__grid_topleft, self.__tile_render_size
+            )
+            is_inside_grid = click_was_inside_grid(mouse_col_row, self.__grid_size)
 
             # C: Handle single events
             for event in pg.event.get():
@@ -95,59 +90,40 @@ class Game:
                     # TODO: Exit straight away, instead of showing game over screen
                     continue_game = False
 
-                # Mouse click has started
-                elif event.type == pg.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        self.__mouse_is_down = True
-
                 # Mouse click is complete
                 elif event.type == pg.MOUSEBUTTONUP:
-                    if event.button == 1:
-                        col_row_clicked = click_to_tile_coord(
-                            event.pos, self.__grid_topleft, self.__tile_render_size
-                        )
-                        if click_was_inside_grid(col_row_clicked, self.__grid_size):
-                            bomb_not_clicked = self.__grid.reveal_click(col_row_clicked)
-                            if not bomb_not_clicked:
-                                print(
-                                    f"GAME OVER!\n\tBomb was clicked at {col_row_clicked}"
-                                )
+                    if event.button == 1 and is_inside_grid:
+                        bomb_not_clicked = self.__grid.reveal_click(mouse_col_row)
 
-                        self.__mouse_is_down = False
+                        if not bomb_not_clicked:
+                            # TODO: Write game over menu
+                            print(f"GAME OVER!\n\tBomb was clicked at {mouse_col_row}")
 
-                    elif event.button == 3:
-                        col_row_clicked = click_to_tile_coord(
-                            event.pos, self.__grid_topleft, self.__tile_render_size
-                        )
-                        if click_was_inside_grid(col_row_clicked, self.__grid_size):
-                            self.__grid.flag_click(col_row_clicked)
+                    elif event.button == 3 and is_inside_grid:
+                        self.__grid.flag_click(mouse_col_row)
 
-            # D: Handle 'ongoing' events
-            if self.__mouse_is_down:
-                self.__mouse_is_down_on = click_to_tile_coord(
-                    pg.mouse.get_pos(), self.__grid_topleft, self.__tile_render_size
-                )
+            # D: Get state of left mouse button
+            # left_click_held, _, _ = pg.mouse.get_pressed()
 
-                if click_was_inside_grid(self.__mouse_is_down_on, self.__grid_size):
-                    self.__grid.select_tile(self.__mouse_is_down_on)
+            # E: Manage tile selection state
 
             # TODO: Clear the screen with a tileset specified background color
-            # E: Clear the screen
+            # F: Clear the screen
             self.__screen.fill("black")
 
-            # F: Render the grid
+            # G: Render the grid
             self.__grid.all_tiles.update()
             self.__grid.all_tiles.draw(self.__screen)
 
-            # G: Debug rendering
+            # H: Debug rendering
             if self.__debug_mode:
                 # self.__render_debug_overlay()
                 pass
 
-            # H. Update display
+            # I. Update display
             pg.display.flip()
 
-            # I. Limit the frame rate
+            # J. Limit the frame rate
             clock.tick(fps)
 
     # def __render_grid(self):

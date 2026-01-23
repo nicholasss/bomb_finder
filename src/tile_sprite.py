@@ -29,8 +29,6 @@ class TileSprite(pg.sprite.Sprite):
         self.__num_neighbors = 0
         self.__has_bomb = False
         self.__was_clicked = False
-        self.__is_selected = False
-        self.__prev_type = TileType.UNCLICKED
         self.__tile_type = TileType.UNCLICKED
 
         # Location of tile on screen
@@ -49,11 +47,6 @@ class TileSprite(pg.sprite.Sprite):
         `self.__tile_type`.
         """
 
-        # if self.__is_selected:
-        #     self.__tile_type = TileType.CLICKED_EMPTY
-        # elif not self.__is_selected and not self.__was_clicked:
-        #     self.__tile_type = TileType.UNCLICKED
-
         self.image = self.__tileset.get_tile(self.__tile_type)
 
     def reveal(self):
@@ -62,6 +55,13 @@ class TileSprite(pg.sprite.Sprite):
 
         Revealing a tile will only show an empty tile, a number, or a bomb. It will remove any flags that were on it.
         """
+
+        # Only is set to true below, prevents running the same method again
+        if self.__was_clicked:
+            return
+
+        # adjust simple state first
+        self.__was_clicked = True
 
         # Warning debug
         if self.__num_neighbors > 8:
@@ -101,19 +101,11 @@ class TileSprite(pg.sprite.Sprite):
         elif self.__tile_type == TileType.UNCLICKED:
             self.__tile_type = TileType.UNCLICKED_CERTAIN
 
-    def perform_select(self):
-        # do not show blank tile if the tile was already revealed
-        if self.__was_clicked:
-            return
-        # self.__is_selected = True
+    # def perform_select(self):
+    #     pass
 
-        self.__prev_type = self.__tile_type
-        self.__tile_type = TileType.CLICKED_EMPTY
-
-    def perform_deselect(self):
-        # self.__is_selected = False
-
-        self.__tile_type = self.__prev_type
+    # def perform_deselect(self):
+    #     pass
 
     def place_bomb(self):
         self.__has_bomb = True
