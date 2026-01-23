@@ -21,7 +21,7 @@ FPS = 120
 SOURCE_FONT_PATH = "./assets/fonts/SourceSansPro/SourcingSansPro-Regular.ttf"
 
 # Debug
-DEBUG_GAME = False
+DEBUG_GAME = True
 
 # Games
 DEFAULT_GRID_SIZE = (6, 6)
