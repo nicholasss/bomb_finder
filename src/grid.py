@@ -73,7 +73,8 @@ class Grid:
         tile_clicked = self.__tile_grid[col][row]
 
         if tile_clicked.has_no_neighbors():
-            # TODO: call flood method
+            # TODO: call flood method and call reveal on all the tiles returned
+            tile_clicked.reveal()
             pass
         else:
             tile_clicked.reveal()
