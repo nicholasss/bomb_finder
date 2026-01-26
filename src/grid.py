@@ -72,10 +72,10 @@ class Grid:
         col, row = col_row_clicked
         tile_clicked = self.__tile_grid[col][row]
 
-        if tile_clicked.has_no_neighbors():
-            # TODO: call flood method and call reveal on all the tiles returned
-            tile_clicked.reveal()
-            pass
+        if tile_clicked.no_neighboring_bombs():
+            if self.__debug_mode:
+                print("DEBUG: Flood tiles")
+            self.__flood_tiles(col_row_clicked)
         else:
             tile_clicked.reveal()
         return tile_clicked.has_no_bomb()
@@ -173,3 +173,53 @@ class Grid:
                     (col, row), self.__grid_cols, self.__grid_rows, self.__tile_grid
                 )
                 self.__tile_grid[col][row].set_neighbors(num_neighbors)
+
+    def __flood_tiles(self, first_tile: tuple[int, int]):
+        """
+        Starting at the first tile, that will not have any neighbors, this algorithm will reveal any tile that is
+        neighboring the empty tiles.
+        """
+
+        print("DEBUG: Flood tiles function")
+
+        to_visit_list: list[tuple[int, int]] = [first_tile]
+        while len(to_visit_list) > 0:
+            print(f"DEBUG: tiles to visit: {len(to_visit_list)}")
+
+            # 1. Always reveal the tile being visited
+            col, row = to_visit_list.pop()
+            self.__tile_grid[col][row].reveal()
+
+            print(f"DEBUG: Checking neighbors of {(col, row)}")
+
+            # 2. Then check if we look at its neighbors
+            if self.__tile_grid[col][row].no_neighboring_bombs():
+                for col_change in range(-1, 2):
+                    for row_change in range(-1, 2):
+                        check_col, check_row = col + col_change, row + row_change
+
+                        # A. Don't recheck the same tile
+                        if col_change == 0 and row_change == 0:
+                            continue
+
+                        # B. Don't look outside of the grid
+                        outside_grid = (
+                            check_col < 0
+                            or check_row < 0
+                            or check_col >= self.__grid_cols
+                            or check_row >= self.__grid_rows
+                        )
+                        if outside_grid:
+                            continue
+
+                        # C. Don't add it if its already in the list
+                        next_tile_visit = (check_col, check_row)
+                        if next_tile_visit in to_visit_list:
+                            continue
+
+                        # D. Don't add it if its already revealed
+                        if self.__tile_grid[check_col][check_row].was_clicked:
+                            continue
+
+                        # E. Add to the list
+                        to_visit_list.append((check_col, check_row))

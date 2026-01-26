@@ -112,7 +112,7 @@ class TileSprite(pg.sprite.Sprite):
     def set_neighbors(self, num_neighbors: int):
         self.__num_neighbors = num_neighbors
 
-    def has_no_neighbors(self) -> bool:
+    def no_neighboring_bombs(self) -> bool:
         if self.__num_neighbors == 0:
             return True
         else:
