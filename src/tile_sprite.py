@@ -97,6 +97,20 @@ class TileSprite(pg.sprite.Sprite):
         elif self.__tile_type == TileType.UNCLICKED:
             self.__tile_type = TileType.UNCLICKED_CERTAIN
 
+    def has_flag(self) -> bool:
+        """
+        Whether the tile has a Certain Flag on it.
+        """
+
+        return self.__tile_type == TileType.UNCLICKED_CERTAIN
+
+    def flag_is_on_mine(self) -> bool:
+        """
+        Whether the tile is correctly flagged or not.
+        """
+
+        return self.__tile_type == TileType.UNCLICKED_CERTAIN and self.has_bomb
+
     def press(self):
         self.__is_pressed = True
 
