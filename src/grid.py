@@ -48,6 +48,10 @@ class Grid:
         self.__grid_rows = grid_size[1]
         self.__tile_grid: list[list[TileSprite]] = []
 
+        # Win state
+        self.__flaged_tiles = 0
+        self.__minecount = self.__num_of_bombs
+
         # Initialization methods
         if self.__debug_mode:
             print("DEBUG: Beginning initialization")
@@ -78,6 +82,9 @@ class Grid:
             self.__flood_tiles(col_row_clicked)
         else:
             tile_clicked.reveal()
+
+        # TODO: Keep track of remaining tiles that need to be revealed
+
         return tile_clicked.has_no_bomb()
 
     def flag_click(self, col_row_clicked: tuple[int, int]):
