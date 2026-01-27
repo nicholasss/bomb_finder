@@ -72,7 +72,7 @@ class Grid:
         col, row = col_row_clicked
         tile_clicked = self.__tile_grid[col][row]
 
-        if tile_clicked.no_neighboring_bombs():
+        if tile_clicked.no_neighboring_bombs() and tile_clicked.has_no_bomb():
             if self.__debug_mode:
                 print("DEBUG: Flood tiles")
             self.__flood_tiles(col_row_clicked)
@@ -180,17 +180,11 @@ class Grid:
         neighboring the empty tiles.
         """
 
-        print("DEBUG: Flood tiles function")
-
         to_visit_list: list[tuple[int, int]] = [first_tile]
         while len(to_visit_list) > 0:
-            print(f"DEBUG: tiles to visit: {len(to_visit_list)}")
-
             # 1. Always reveal the tile being visited
             col, row = to_visit_list.pop()
             self.__tile_grid[col][row].reveal()
-
-            print(f"DEBUG: Checking neighbors of {(col, row)}")
 
             # 2. Then check if we look at its neighbors
             if self.__tile_grid[col][row].no_neighboring_bombs():
