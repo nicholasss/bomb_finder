@@ -59,18 +59,18 @@ class TileSprite(pg.sprite.Sprite):
         # adjust simple state first
         self.was_clicked = True
 
+        if self.has_bomb:
+            # TODO: Only the first frame of the bomb, needs to kick off animation somehow?
+            # Unsure where to trigger and perform the animation
+            self.__tile_type = TileType.BOMB_A
+            return
+
         # Warning debug
         if self.__num_neighbors > 8:
             print(
                 f"WARNING: neighboring bombs of cell at {(self.__x, self.__y)} is more than 8. neigbors with bombs->{self.__num_neighbors}"
             )
         # NOTE: Could add additional warninga here to check for known state?
-
-        if self.has_bomb:
-            # TODO: Only the first frame of the bomb, needs to kick off animation somehow?
-            # Unsure where to trigger and perform the animation
-            self.__tile_type = TileType.BOMB_A
-            return
 
         # Tile does not have a bomb
         if self.__num_neighbors == 0:
