@@ -35,7 +35,6 @@ class Grid:
         self.__num_of_bombs = num_of_bombs
         self.__rng = rng
         self.__font = font
-        self.__grid_size = grid_size
         self.__grid_topleft = grid_topleft
         self.__debug_mode = debug_mode
 
@@ -44,8 +43,9 @@ class Grid:
 
         # Grid
         self.__grid_left, self.__grid_top = self.__grid_topleft
-        self.__grid_cols = grid_size[0]
-        self.__grid_rows = grid_size[1]
+        self.__grid_size = grid_size
+        self.__grid_cols = self.__grid_size[0]
+        self.__grid_rows = self.__grid_size[1]
         self.__tile_grid: list[list[TileSprite]] = []
 
         # Win state
