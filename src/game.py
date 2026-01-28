@@ -77,6 +77,10 @@ class Game:
                     )
                     debug_timer = 0
 
+                # print(
+                #     f"DEBUG:\n\tTiles remaining: {self.__grid.remaining_tiles_to_reveal}\n\tFlags remaining: {self.__grid.flags_remaining}"
+                # )
+
             # B: Get mouse position
             mouse_pos = pg.mouse.get_pos()
             mouse_col_row = click_to_tile_coord(
@@ -114,8 +118,9 @@ class Game:
                                     f"GAME OVER!\n\tBomb was clicked at {mouse_col_row}"
                                 )
 
-                        # Always reset if left mouse button was pressed
-                        self.__pressed_tile = None
+                            # Always reset if left mouse button was pressed
+                            self.__pressed_tile = None
+                            left_click_held = False
 
                     # Flaging tiles
                     elif event.button == 3 and is_inside_grid:
