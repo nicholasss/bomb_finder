@@ -1,3 +1,4 @@
+import time
 import random
 import pygame as pg
 from tileset import Tileset
@@ -53,6 +54,13 @@ class Grid:
             self.__grid_cols * self.__grid_rows
         ) - self.__num_of_bombs
         self.flags_remaining = self.__num_of_bombs
+        self.game_was_won: bool = False
+
+        # Game timer
+        self.__first_click_occured_at: float | None = None
+        self.__game_ended_at: float | None = None
+
+        self.__first_click_occured: bool = False
 
         # Initialization methods
         if self.__debug_mode:
@@ -75,6 +83,10 @@ class Grid:
         and the game can continue.
         """
 
+        if not self.__first_click_occured:
+            self.__first_click_occured = True
+            self.__first_click_occured_at = time.time()
+
         col, row = col_row_clicked
         tile_clicked = self.__tile_grid[col][row]
 
@@ -85,6 +97,7 @@ class Grid:
         elif tile_clicked.has_bomb:
             # Reveal the bomb and end the game
             tile_clicked.reveal()
+            self.__end_game(False)
             return False
 
         elif tile_clicked.no_neighboring_bombs():
@@ -92,15 +105,17 @@ class Grid:
             num_tiles_revealed = self.__flood_tiles(col_row_clicked)
             # NOTE: the private method itself could handle decrementing num_tiles_revealed
             self.remaining_tiles_to_reveal -= num_tiles_revealed
-            return True
 
         else:
             # Reveal single tile and decrement tiles left to reveal
             tile_clicked.reveal()
             self.remaining_tiles_to_reveal -= 1
-            return True
 
-        # TODO: Keep track of remaining tiles that need to be revealed
+        # Tile was revealed. Was it the last tile?
+        if self.remaining_tiles_to_reveal <= 0:
+            self.__end_game(True)
+
+        return True
 
     def flag_click(self, col_row_clicked: tuple[int, int]):
         """
@@ -254,3 +269,24 @@ class Grid:
                         to_visit_list.append((check_col, check_row))
 
         return num_revealed_tiles
+
+    def __end_game(self, player_won: bool) -> float:
+        """
+        End the game by calculating the time to clear the level.
+        """
+
+        self.__game_ended_at = time.time()
+        if player_won:
+            self.game_was_won = True
+        else:
+            return 0.0
+
+        # Type guarding
+        if type(self.__first_click_occured_at) is not float:
+            raise TypeError("Time of first click was not saved.")
+
+        # calcluate and return game time
+        game_time = self.__game_ended_at - self.__first_click_occured_at
+
+        print(f"DEBUG: Game Won!\nDEBUG: Grid took {game_time:.2f}s to complete.")
+        return game_time

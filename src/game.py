@@ -112,11 +112,15 @@ class Game:
                             bomb_not_clicked = self.__grid.reveal_click(mouse_col_row)
 
                             # Bomb was clicked!
-                            if not bomb_not_clicked:
+                            if not bomb_not_clicked and not self.__grid.game_was_won:
                                 # TODO: Write game over menu
-                                print(
-                                    f"GAME OVER!\n\tBomb was clicked at {mouse_col_row}"
-                                )
+                                print(f"GAME OVER: Bomb was clicked at {mouse_col_row}")
+                                continue_game = False
+
+                            elif bomb_not_clicked and self.__grid.game_was_won:
+                                # TODO: Write game won menu
+                                print("DEBUG: [game.py] Game Won!")
+                                continue_game = False
 
                             # Always reset if left mouse button was pressed
                             self.__pressed_tile = None
