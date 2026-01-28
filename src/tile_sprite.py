@@ -59,18 +59,18 @@ class TileSprite(pg.sprite.Sprite):
         # adjust simple state first
         self.was_clicked = True
 
+        if self.has_bomb:
+            # TODO: Only the first frame of the bomb, needs to kick off animation somehow?
+            # Unsure where to trigger and perform the animation
+            self.__tile_type = TileType.BOMB_A
+            return
+
         # Warning debug
         if self.__num_neighbors > 8:
             print(
                 f"WARNING: neighboring bombs of cell at {(self.__x, self.__y)} is more than 8. neigbors with bombs->{self.__num_neighbors}"
             )
         # NOTE: Could add additional warninga here to check for known state?
-
-        if self.has_bomb:
-            # TODO: Only the first frame of the bomb, needs to kick off animation somehow?
-            # Unsure where to trigger and perform the animation
-            self.__tile_type = TileType.BOMB_A
-            return
 
         # Tile does not have a bomb
         if self.__num_neighbors == 0:
@@ -79,23 +79,44 @@ class TileSprite(pg.sprite.Sprite):
         elif self.__num_neighbors >= 1:
             self.__tile_type = TileType(self.__num_neighbors + 1)
 
-    def cycle_flag(self):
+    def cycle_flag(self) -> tuple[bool, bool]:
         """
         Cycle the flag state of the tile. Certain Flag -> Uncertain Flag -> Unflagged -> Certain Flag, etc.
 
         12 = Certain Flag
         13 = Uncertain Flag
         0  = Unflagged
+
+        Returns (should update flag count, now has a flag)
         """
 
         if self.__tile_type == TileType.UNCLICKED_CERTAIN:
             self.__tile_type = TileType.UNCLICKED_UNCERTAIN
+            return (True, False)
 
         elif self.__tile_type == TileType.UNCLICKED_UNCERTAIN:
             self.__tile_type = TileType.UNCLICKED
+            return (False, False)
 
         elif self.__tile_type == TileType.UNCLICKED:
             self.__tile_type = TileType.UNCLICKED_CERTAIN
+            return (True, True)
+
+        return (False, False)
+
+    def has_flag(self) -> bool:
+        """
+        Whether the tile has a Certain Flag on it.
+        """
+
+        return self.__tile_type == TileType.UNCLICKED_CERTAIN
+
+    def flag_is_on_mine(self) -> bool:
+        """
+        Whether the tile is correctly flagged or not.
+        """
+
+        return self.__tile_type == TileType.UNCLICKED_CERTAIN and self.has_bomb
 
     def press(self):
         self.__is_pressed = True
@@ -112,7 +133,7 @@ class TileSprite(pg.sprite.Sprite):
     def set_neighbors(self, num_neighbors: int):
         self.__num_neighbors = num_neighbors
 
-    def has_no_neighbors(self) -> bool:
+    def no_neighboring_bombs(self) -> bool:
         if self.__num_neighbors == 0:
             return True
         else:

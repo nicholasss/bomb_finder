@@ -77,6 +77,10 @@ class Game:
                     )
                     debug_timer = 0
 
+                # print(
+                #     f"DEBUG:\n\tTiles remaining: {self.__grid.remaining_tiles_to_reveal}\n\tFlags remaining: {self.__grid.flags_remaining}"
+                # )
+
             # B: Get mouse position
             mouse_pos = pg.mouse.get_pos()
             mouse_col_row = click_to_tile_coord(
@@ -108,14 +112,19 @@ class Game:
                             bomb_not_clicked = self.__grid.reveal_click(mouse_col_row)
 
                             # Bomb was clicked!
-                            if not bomb_not_clicked:
+                            if not bomb_not_clicked and not self.__grid.game_was_won:
                                 # TODO: Write game over menu
-                                print(
-                                    f"GAME OVER!\n\tBomb was clicked at {mouse_col_row}"
-                                )
+                                print(f"GAME OVER: Bomb was clicked at {mouse_col_row}")
+                                continue_game = False
 
-                        # Always reset if left mouse button was pressed
-                        self.__pressed_tile = None
+                            elif bomb_not_clicked and self.__grid.game_was_won:
+                                # TODO: Write game won menu
+                                print("DEBUG: [game.py] Game Won!")
+                                continue_game = False
+
+                            # Always reset if left mouse button was pressed
+                            self.__pressed_tile = None
+                            left_click_held = False
 
                     # Flaging tiles
                     elif event.button == 3 and is_inside_grid:
@@ -180,63 +189,3 @@ class Game:
     # tile type = {atlas_name}
     # atlas number = {atlas_num}
     # """
-
-    # TODO: Rewrite in grid class
-    #
-    def __make_tile_flood_reveal_list(
-        self, first_tile: tuple[int, int]
-    ) -> list[tuple[int, int]]:
-        """
-        From a starting coordinate of 'first_tile', find all adjascent tiles that need to be revealed.
-        Utilizing a DFS algorithm.
-        """
-        tiles_to_visit: list[tuple[int, int]] = [first_tile]
-        tiles_to_reveal: list[tuple[int, int]] = [first_tile]
-        while len(tiles_to_visit) > 0:
-            tile_being_visited = tiles_to_visit.pop()
-            tile_visit_x, tile_visit_y = tile_being_visited
-
-            # 1. check if empty tile
-            if self.__tile_grid[tile_visit_x][tile_visit_y].get_number() <= 0:
-                # 1a. IF it is tile with 0, then add to to_visit and...
-                if tile_being_visited not in tiles_to_reveal:
-                    tiles_to_reveal.append(tile_being_visited)
-
-                # TODO: make into some kind of iterator function
-                #
-                # 1b. iterate through and add surrounding tiles to_reveal list
-                for x in range(-1, 2):
-                    for y in range(-1, 2):
-                        tile_x, tile_y = tile_visit_x + x, tile_visit_y + y
-                        # print("")
-                        # print(f"Should we reveal {(tile_x, tile_y)}?")
-
-                        # skip looking at the center tile itself
-                        if x == 0 and y == 0:
-                            # print("\tNo, its the tile itself")
-                            continue
-
-                        # check if tile is too low outside grid
-                        elif tile_x < 0 or tile_y < 0:
-                            # print("\tNo, its too low outside grid (negative)")
-                            continue
-
-                        # check if tile is too high outside grid
-                        elif tile_x >= self.__grid_cols or tile_y >= self.__grid_rows:
-                            # print(
-                            #     "\tNo, its too high outside grid (greater than rows/cols)"
-                            # )
-                            continue
-
-                        # add to to_reveal list
-                        # print("\tYes, its valid.")
-                        tile_coord = (tile_x, tile_y)
-                        if tile_coord not in tiles_to_reveal:
-                            tiles_to_reveal.append(tile_coord)
-                            tiles_to_visit.append(tile_coord)
-
-            # its not an empty tile, only add to tiles_to_reveal, do not check surrounding tiles
-            if tile_being_visited not in tiles_to_reveal:
-                tiles_to_reveal.append(tile_being_visited)
-
-        return tiles_to_reveal
