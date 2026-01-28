@@ -79,23 +79,30 @@ class TileSprite(pg.sprite.Sprite):
         elif self.__num_neighbors >= 1:
             self.__tile_type = TileType(self.__num_neighbors + 1)
 
-    def cycle_flag(self):
+    def cycle_flag(self) -> tuple[bool, bool]:
         """
         Cycle the flag state of the tile. Certain Flag -> Uncertain Flag -> Unflagged -> Certain Flag, etc.
 
         12 = Certain Flag
         13 = Uncertain Flag
         0  = Unflagged
+
+        Returns (should update flag count, now has a flag)
         """
 
         if self.__tile_type == TileType.UNCLICKED_CERTAIN:
             self.__tile_type = TileType.UNCLICKED_UNCERTAIN
+            return (True, False)
 
         elif self.__tile_type == TileType.UNCLICKED_UNCERTAIN:
             self.__tile_type = TileType.UNCLICKED
+            return (False, False)
 
         elif self.__tile_type == TileType.UNCLICKED:
             self.__tile_type = TileType.UNCLICKED_CERTAIN
+            return (True, True)
+
+        return (False, False)
 
     def has_flag(self) -> bool:
         """
