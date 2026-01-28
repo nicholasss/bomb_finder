@@ -49,8 +49,10 @@ class Grid:
         self.__tile_grid: list[list[TileSprite]] = []
 
         # Win state
-        self.__flaged_tiles = 0
-        self.__minecount = self.__num_of_bombs
+        self.remaining_tiles_to_reveal = (
+            self.__grid_cols * self.__grid_rows
+        ) - self.__num_of_bombs
+        self.flags_remaining = self.__num_of_bombs
 
         # Initialization methods
         if self.__debug_mode:
@@ -76,16 +78,29 @@ class Grid:
         col, row = col_row_clicked
         tile_clicked = self.__tile_grid[col][row]
 
-        if tile_clicked.no_neighboring_bombs() and tile_clicked.has_no_bomb():
-            if self.__debug_mode:
-                print("DEBUG: Flood tiles")
-            self.__flood_tiles(col_row_clicked)
-        else:
+        if tile_clicked.has_flag() or tile_clicked.was_clicked:
+            # Unable to reveal due to flag blocking reveal
+            return True
+
+        elif tile_clicked.has_bomb:
+            # Reveal the bomb and end the game
             tile_clicked.reveal()
+            return False
+
+        elif tile_clicked.no_neighboring_bombs():
+            # Reveal many tiles and decrement tiles left to reveal
+            num_tiles_revealed = self.__flood_tiles(col_row_clicked)
+            # NOTE: the private method itself could handle decrementing num_tiles_revealed
+            self.remaining_tiles_to_reveal -= num_tiles_revealed
+            return True
+
+        else:
+            # Reveal single tile and decrement tiles left to reveal
+            tile_clicked.reveal()
+            self.remaining_tiles_to_reveal -= 1
+            return True
 
         # TODO: Keep track of remaining tiles that need to be revealed
-
-        return tile_clicked.has_no_bomb()
 
     def flag_click(self, col_row_clicked: tuple[int, int]):
         """
@@ -95,7 +110,13 @@ class Grid:
         col, row = col_row_clicked
         tile_clicked = self.__tile_grid[col][row]
 
-        tile_clicked.cycle_flag()
+        update_flag_count, tile_now_has_flag = tile_clicked.cycle_flag()
+
+        if update_flag_count:
+            if tile_now_has_flag:
+                self.flags_remaining -= 1
+            else:
+                self.flags_remaining += 1
 
     def press_tile(self, col_row_clicked: tuple[int, int]):
         """
@@ -105,8 +126,10 @@ class Grid:
         col, row = col_row_clicked
         tile_clicked = self.__tile_grid[col][row]
 
-        if not tile_clicked.was_clicked:
-            tile_clicked.press()
+        if tile_clicked.was_clicked or tile_clicked.has_flag():
+            return
+
+        tile_clicked.press()
 
     def unpress_tile(self, col_row_clicked: tuple[int, int]):
         """
@@ -185,13 +208,18 @@ class Grid:
         """
         Starting at the first tile, that will not have any neighbors, this algorithm will reveal any tile that is
         neighboring the empty tiles.
+
+        Return how many tiles were revealed
         """
+
+        num_revealed_tiles = 0
 
         to_visit_list: list[tuple[int, int]] = [first_tile]
         while len(to_visit_list) > 0:
-            # 1. Always reveal the tile being visited
+            # 1. Always reveal the tile being visited, and increment the counter
             col, row = to_visit_list.pop()
             self.__tile_grid[col][row].reveal()
+            num_revealed_tiles += 1
 
             # 2. Then check if we look at its neighbors
             if self.__tile_grid[col][row].no_neighboring_bombs():
@@ -224,3 +252,5 @@ class Grid:
 
                         # E. Add to the list
                         to_visit_list.append((check_col, check_row))
+
+        return num_revealed_tiles
