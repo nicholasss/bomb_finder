@@ -42,6 +42,7 @@ class Game:
         self.__grid_topleft = grid_topleft
         self.__debug_mode = debug_mode
         self.__pressed_tile: None | tuple[int, int] = None
+        self.__bg_color = pg.Color(132, 126, 135)
 
         # Bomb grid
         self.__grid = Grid(
@@ -59,6 +60,7 @@ class Game:
         # complete iniialization
         print("DEBUG: Game Initialized")
 
+    # == Public Methods ==
     def start_game(self, clock: pg.time.Clock, fps: int):
         """
         Start the main game loop.
@@ -145,11 +147,17 @@ class Game:
             # TODO: Clear the screen with a tileset specified background color
             #
             # G: Render frame
-            self.__screen.fill("black")
+            self.__screen.fill(self.__bg_color)
+
+            # G-1: Render GUI
+            self.__update()
+            self.__draw_gui()
+
+            # G-1: Render grid
             self.__grid.all_tiles.update()
             self.__grid.all_tiles.draw(self.__screen)
 
-            # H: Debug rendering
+            # H: Render debug overlay, if enabled
             if self.__debug_mode:
                 # self.__render_debug_overlay()
                 pass
@@ -163,6 +171,37 @@ class Game:
 
             # K. Limit the frame rate
             clock.tick(fps)
+
+    # == Private Methods ==
+    def __update(self):
+        """
+        Every frame this will be called to update the state of the game class.
+        """
+
+        pass
+
+    def __draw_gui(self):
+        """
+        Every frame this will be called to draw the GUI onto the screen.
+        """
+
+        #
+        # Static GUI
+        # draw box across the top, left, right, and bottom of the grid.
+
+        # Above the grid
+        # top_bar_size = self.__screen.width, self.__screen.height
+        # top_bar_surf = pg.Surface(top_bar_size)
+        # top_bar_surf.fill("gray")
+
+        # top_bar_rect = top_bar_surf.get_rect()
+
+        # self.__screen.blit(top_bar_surf, top_bar_rect)
+
+        #
+        # Dynamic GUI
+
+        pass
 
     # Debug data and text
     #
