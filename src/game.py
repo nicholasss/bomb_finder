@@ -1,5 +1,6 @@
 import random
 import pygame as pg
+from button import Button
 from tileset import Tileset
 from grid import Grid
 from utility import click_to_tile_coord, click_was_inside_grid
@@ -56,6 +57,13 @@ class Game:
             self.__grid_topleft,
             self.__debug_mode,
         )
+
+        # Buttons
+        self.__restart_button = Button(
+            self.__font, 15, 15, 100, 300, self.__new_game_callback, text="New Game"
+        )
+
+        self.__buttons = pg.sprite.Group(self.__restart_button)
 
         # complete iniialization
         print("DEBUG: Game Initialized")
@@ -132,6 +140,10 @@ class Game:
                     elif event.button == 3 and is_inside_grid:
                         self.__grid.flag_click(mouse_col_row)
 
+                # Pass events to all buttons
+                for button in self.__buttons:
+                    button.handle_event(event)
+
             # E: Manage "held press" tile state
             if left_click_held and is_inside_grid:
                 self.__pressed_tile = mouse_col_row
@@ -178,12 +190,23 @@ class Game:
         Every frame this will be called to update the state of the game class.
         """
 
+        # TODO:
+        # 1. Update seconds since game start
+        # 2. Update flags used
+        # 3. Update if game has ended and whether its a win or loss
+
         pass
 
     def __draw_gui(self):
         """
         Every frame this will be called to draw the GUI onto the screen.
         """
+
+        # TODO:
+        # Draw the restart button
+        # Draw the boxes
+
+        self.__buttons.draw(self.__screen)
 
         #
         # Static GUI
@@ -202,6 +225,9 @@ class Game:
         # Dynamic GUI
 
         pass
+
+    def __new_game_callback(self):
+        print("DEBUG: New game button pressed")
 
     # Debug data and text
     #
