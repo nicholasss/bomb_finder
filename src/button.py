@@ -44,10 +44,7 @@ class Button(pg.sprite.Sprite):
         self.rect.topleft = self.__position
 
         # Render and place font
-        button_center = self.image.get_rect().center
-        text_surf = font.render(self.__text, True, self.__text_color)
-        text_rect = text_surf.get_rect(center=button_center)
-        self.image.blit(text_surf, text_rect)
+        self.__render_font()
 
     def handle_event(self, event: pg.Event):
         """
@@ -59,6 +56,7 @@ class Button(pg.sprite.Sprite):
             if self.rect.collidepoint(event.pos):
                 # change self.image to instance's image_down
                 self.image.fill(self.__button_down_color)
+                self.__render_font()
 
                 self.__button_down = True
         elif event.type == pg.MOUSEBUTTONUP:
@@ -66,6 +64,7 @@ class Button(pg.sprite.Sprite):
                 self.__callback()
                 # change self.image to instance's image_hover
                 self.image.fill(self.__button_hover_color)
+                self.__render_font()
 
             self.__button_down = False
         elif event.type == pg.MOUSEMOTION:
@@ -73,7 +72,15 @@ class Button(pg.sprite.Sprite):
             if collided and not self.__button_down:
                 # change self.image to instance's image_hover
                 self.image.fill(self.__button_hover_color)
+                self.__render_font()
 
             elif not collided:
                 # change self.image to instance's image_normal
                 self.image.fill(self.__button_normal_color)
+                self.__render_font()
+
+    def __render_font(self):
+        button_center = self.image.get_rect().center
+        text_surf = self.__font.render(self.__text, True, self.__text_color)
+        text_rect = text_surf.get_rect(center=button_center)
+        self.image.blit(text_surf, text_rect)
