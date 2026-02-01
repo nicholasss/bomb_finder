@@ -87,7 +87,7 @@ class NumberSet:
             self.__numbers.append(new_number)
 
             # Do not create more than the 11 numbers
-            num_of_numbers = -1
+            num_of_numbers -= 1
             if num_of_numbers <= 0:
                 return
 
