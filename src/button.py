@@ -57,6 +57,7 @@ class Button(pg.sprite.Sprite):
                 # change self.image to instance's image_down
                 self.image.fill(self.__button_down_color)
                 self.__render_font()
+                pg.mouse.set_cursor(pg.SYSTEM_CURSOR_ARROW)
 
                 self.__button_down = True
         elif event.type == pg.MOUSEBUTTONUP:
@@ -65,6 +66,7 @@ class Button(pg.sprite.Sprite):
                 # change self.image to instance's image_hover
                 self.image.fill(self.__button_hover_color)
                 self.__render_font()
+                pg.mouse.set_cursor(pg.SYSTEM_CURSOR_HAND)
 
             self.__button_down = False
         elif event.type == pg.MOUSEMOTION:
@@ -73,11 +75,13 @@ class Button(pg.sprite.Sprite):
                 # change self.image to instance's image_hover
                 self.image.fill(self.__button_hover_color)
                 self.__render_font()
+                pg.mouse.set_cursor(pg.SYSTEM_CURSOR_HAND)
 
             elif not collided:
                 # change self.image to instance's image_normal
                 self.image.fill(self.__button_normal_color)
                 self.__render_font()
+                pg.mouse.set_cursor(pg.SYSTEM_CURSOR_ARROW)
 
     def __render_font(self):
         button_center = self.image.get_rect().center
