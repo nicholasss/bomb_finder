@@ -1,3 +1,4 @@
+from enum import Enum
 import pygame as pg
 
 
@@ -12,6 +13,21 @@ NUMBER_PX_WIDTH = 32
 #
 # Then, the numbers, three digits wide, need to be put together onto the faux digital display
 # and returned as a pg.Surface
+
+
+class SegmentType(Enum):
+    EMPTY = 0
+    MINUS = 1
+    ZERO = 2
+    ONE = 3
+    TWO = 4
+    THREE = 5
+    FOUR = 6
+    FIVE = 7
+    SIX = 8
+    SEVEN = 9
+    EIGHT = 10
+    NINE = 11
 
 
 class NumberSet:
