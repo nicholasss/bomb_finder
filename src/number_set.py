@@ -72,10 +72,10 @@ class NumberSet:
         numbers_size = (NUMBER_PX_WIDTH, NUMBER_PX_HEIGHT)
 
         num_of_numbers = 12  # un-lit 8-segment, a minus, and 0 through 9
-        for row in range(numbers_px_left, self.__rect.width, NUMBER_PX_WIDTH):
+        for col in range(numbers_px_left, self.__rect.width, NUMBER_PX_WIDTH):
             new_number = pg.Surface(numbers_size)
 
-            new_number.blit(self.__image, area=(row, 0, *numbers_size))
+            new_number.blit(self.__image, area=(col, 0, *numbers_size))
             pg.transform.scale(
                 new_number,
                 (
@@ -119,8 +119,8 @@ class NumberDisplay:
 
     def __reset_display(self):
         empty_segment = self.__number_set.get_segment(SegmentType.EMPTY)
-        for row in range(3):
-            self.__display.blit(empty_segment, (NUMBER_PX_WIDTH * row, 0))
+        for col in range(3):
+            self.__display.blit(empty_segment, (NUMBER_PX_WIDTH * col, 0))
 
     def get_display(self) -> pg.Surface:
         return self.__display
