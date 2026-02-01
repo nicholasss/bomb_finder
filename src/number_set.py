@@ -14,11 +14,13 @@ NUMBER_PX_WIDTH = 32
 # and returned as a pg.Surface
 
 
-class NumberSet:
+class NumberDisplay:
     def __init__(self, scale: int = 2):
+        self.__scale: int = scale
+
         self.__numbers: list[pg.Surface]
         self.__background: pg.Surface
-        self.__scale: int = scale
+        self.__display: pg.Surface
 
         # Loading and processing
         self.__image: pg.Surface = pg.image.load(NUMBER_IMAGE_PATH).convert_alpha()
@@ -29,6 +31,7 @@ class NumberSet:
         # Making the tiles
         self.__make_background()
         self.__make_numbers()
+        self.__make_display()
 
     def __make_background(self):
         """
@@ -76,3 +79,19 @@ class NumberSet:
             num_of_numbers = -1
             if num_of_numbers <= 0:
                 return
+
+    def __make_display(self):
+        display_size = (96 * self.__scale, 64 * self.__scale)
+        self.__display = pg.Surface(display_size)
+        self.__display.blit(self.__background)
+
+    def get_display(self) -> pg.Surface:
+        return self.__display
+
+    def update_number(self, number: int):
+        if number < -99:
+            raise ValueError("Unable to display below -99")
+        elif number > 999:
+            raise ValueError("Unable to display above 999")
+
+        pass
