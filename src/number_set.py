@@ -144,10 +144,6 @@ class NumberDisplay:
         for digit in str(number):
             digits.append(digit)
 
-        # Add a negative sign
-        if number < -1:
-            digits.insert(0, "-")
-
         # Pad the left side to ensure we have three characters
         while len(digits) < 3:
             digits.insert(0, " ")
