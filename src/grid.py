@@ -57,7 +57,7 @@ class Grid:
         self.game_was_won: bool = False
 
         # Game timer
-        self.__first_click_occured_at: float | None = None
+        self.first_click_occured_at: float | None = None
         self.__game_ended_at: float | None = None
 
         self.__first_click_occured: bool = False
@@ -85,7 +85,7 @@ class Grid:
 
         if not self.__first_click_occured:
             self.__first_click_occured = True
-            self.__first_click_occured_at = time.time()
+            self.first_click_occured_at = time.time()
 
         col, row = col_row_clicked
         tile_clicked = self.__tile_grid[col][row]
@@ -282,11 +282,11 @@ class Grid:
             return 0.0
 
         # Type guarding
-        if type(self.__first_click_occured_at) is not float:
+        if type(self.first_click_occured_at) is not float:
             raise TypeError("Time of first click was not saved.")
 
         # calcluate and return game time
-        game_time = self.__game_ended_at - self.__first_click_occured_at
+        game_time = self.__game_ended_at - self.first_click_occured_at
 
         print(f"DEBUG: Game Won!\nDEBUG: Grid took {game_time:.2f}s to complete.")
         return game_time
