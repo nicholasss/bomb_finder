@@ -14,24 +14,20 @@ NUMBER_PX_WIDTH = 32
 # and returned as a pg.Surface
 
 
-class NumberDisplay:
+class NumberSet:
     def __init__(self, scale: int = 2):
-        self.__scale: int = scale
+        self.scale: int = scale
 
         self.__numbers: list[pg.Surface]
         self.__background: pg.Surface
-        self.__display: pg.Surface
 
         # Loading and processing
         self.__image: pg.Surface = pg.image.load(NUMBER_IMAGE_PATH).convert_alpha()
         self.__rect: pg.Rect = self.__image.get_rect()
-        self.__og_image_height_px: int = self.__image.height
-        self.__og_image_width_px: int = self.__image.width
 
         # Making the tiles
         self.__make_background()
         self.__make_numbers()
-        self.__make_display()
 
     def __make_background(self):
         """
@@ -44,8 +40,8 @@ class NumberDisplay:
         pg.transform.scale(
             self.__background,
             (
-                int(self.__background.get_width() * self.__scale),
-                int(self.__background.get_height() * self.__scale),
+                int(self.__background.get_width() * self.scale),
+                int(self.__background.get_height() * self.scale),
             ),
         ).convert_alpha()
 
@@ -68,8 +64,8 @@ class NumberDisplay:
             pg.transform.scale(
                 new_number,
                 (
-                    int(new_number.get_width() * self.__scale),
-                    int(new_number.get_height() * self.__scale),
+                    int(new_number.get_width() * self.scale),
+                    int(new_number.get_height() * self.scale),
                 ),
             ).convert_alpha()
 
@@ -80,10 +76,22 @@ class NumberDisplay:
             if num_of_numbers <= 0:
                 return
 
+    def get_background(self) -> pg.Surface:
+        return self.__background
+
+
+class NumberDisplay:
+    def __init__(self, number_set: NumberSet):
+        self.__display: pg.Surface
+        self.__number_set: NumberSet = number_set
+
+        self.__make_display()
+
     def __make_display(self):
-        display_size = (96 * self.__scale, 64 * self.__scale)
+        scale = self.__number_set.scale
+        display_size = (96 * scale, 64 * scale)
         self.__display = pg.Surface(display_size)
-        self.__display.blit(self.__background)
+        self.__display.blit(self.__number_set.get_background())
 
     def get_display(self) -> pg.Surface:
         return self.__display
