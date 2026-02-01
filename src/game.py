@@ -1,8 +1,10 @@
 import random
+import time
 import pygame as pg
 from button import Button
 from tileset import Tileset
 from grid import Grid
+from number_set import NumberSet, NumberDisplay
 from utility import click_to_tile_coord, click_was_inside_grid
 
 
@@ -64,6 +66,11 @@ class Game:
         )
 
         self.__buttons = pg.sprite.Group(self.__restart_button)
+
+        # Displays
+        self.__number_set = NumberSet()
+        self.__flags_remaining_display = NumberDisplay(self.__number_set)
+        self.__seconds_elapsed_display = NumberDisplay(self.__number_set)
 
         # complete iniialization
         print("DEBUG: Game Initialized")
@@ -195,7 +202,13 @@ class Game:
         # 2. Update flags used
         # 3. Update if game has ended and whether its a win or loss
 
-        pass
+        time_elapsed = 0
+        first_click_occured_at = self.__grid.first_click_occured_at
+        if isinstance(first_click_occured_at, float):
+            time_elapsed = int(time.time() - first_click_occured_at)
+
+        self.__flags_remaining_display.update_number(self.__grid.flags_remaining)
+        self.__seconds_elapsed_display.update_number(time_elapsed)
 
     def __draw_gui(self):
         """
@@ -206,7 +219,17 @@ class Game:
         # Draw the restart button
         # Draw the boxes
 
-        self.__buttons.draw(self.__screen)
+        # self.__buttons.draw(self.__screen)
+
+        flag_display_location = (10, 10)
+        self.__screen.blit(
+            self.__flags_remaining_display.get_display(), flag_display_location
+        )
+
+        seconds_display_location = (300, 10)
+        self.__screen.blit(
+            self.__seconds_elapsed_display.get_display(), seconds_display_location
+        )
 
         #
         # Static GUI
@@ -223,8 +246,6 @@ class Game:
 
         #
         # Dynamic GUI
-
-        pass
 
     def __new_game_callback(self):
         print("DEBUG: New game button pressed")
