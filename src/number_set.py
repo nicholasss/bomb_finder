@@ -101,7 +101,8 @@ class NumberSet:
 class NumberDisplay:
     """
     NumberDisplay needs to have an instantiated NumberSet passed in.
-    NumberSet is a number tile set.
+
+    In order to use the display you need to blit it onto the screen.
     """
 
     def __init__(self, number_set: NumberSet):
