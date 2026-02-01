@@ -24,7 +24,7 @@ DEBUG_GAME = True
 
 # Games
 DEFAULT_GRID_SIZE = (6, 6)
-DEFAULT_GRID_TOPLEFT = (100, 100)
+DEFAULT_GRID_TOPLEFT = (200, 200)
 DEFAULT_SEED = 0xABCDEF1234  # All seeds should be a 10 digit hexadecimal number
 DEFAULT_NUMBER_BOMBS = 3
 
