@@ -126,17 +126,45 @@ class NumberDisplay:
         return self.__display
 
     def update_number(self, number: int):
+        """
+        Update the display on the instance.
+
+        Value error will be raised if the number will not fit on the display.
+        """
+
+        # Limit to three digits/characters
         if number < -99:
             raise ValueError("Unable to display below -99")
         elif number > 999:
             raise ValueError("Unable to display above 999")
 
-        number_is_negative = False
-        if number < -1:
-            number_is_negative = True
+        # Convert to list of characters (strings)
+        digits: list[str] = []
+        for digit in str(number):
+            digits.append(digit)
 
-        # TODO:
-        # Turn into string
-        # Split into individual characters
-        # Convert to integers
-        # Place the numbers onto the display
+        # Add a negative sign
+        if number < -1:
+            digits.insert(0, "-")
+
+        # Pad the left side to ensure we have three characters
+        while len(digits) < 3:
+            digits.insert(0, " ")
+
+        # Blit the segments to the instance's display
+        for col in range(3):
+            segment_char: str = digits[col]
+            segment_type: SegmentType
+
+            if segment_char == "-":
+                segment_type = SegmentType.MINUS
+            elif segment_char == " ":
+                segment_type = SegmentType.EMPTY
+            elif segment_char.isdigit():
+                segment_type = SegmentType(int(segment_char) + 2)
+            else:
+                raise ValueError(f"Unhandled character of {segment_char}")
+
+            segment_topleft = (col * NUMBER_PX_WIDTH, 0)
+            segment_digit = self.__number_set.get_segment(segment_type)
+            self.__display.blit(segment_digit, segment_topleft)
