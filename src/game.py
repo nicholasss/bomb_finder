@@ -62,7 +62,7 @@ class Game:
 
         # Buttons
         self.__restart_button = Button(
-            self.__font, 15, 15, 100, 300, self.__new_game_callback, text="New Game"
+            self.__font, 250, 25, 100, 300, self.__new_game_callback, text="New Game"
         )
 
         self.__buttons = pg.sprite.Group(self.__restart_button)
@@ -219,7 +219,7 @@ class Game:
         # Draw the restart button
         # Draw the boxes
 
-        # self.__buttons.draw(self.__screen)
+        self.__buttons.draw(self.__screen)
 
         flag_display_location = (10, 10)
         self.__screen.blit(
