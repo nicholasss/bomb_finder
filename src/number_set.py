@@ -1,7 +1,7 @@
 from enum import Enum
 import pygame as pg
 
-NUMBER_IMAGE_PATH = "./../assets/asperite_files/numbers.png"
+NUMBER_IMAGE_PATH = "assets/asperite_files/numbers.png"
 NUMBER_PX_HEIGHT = 64
 NUMBER_PX_WIDTH = 32
 
