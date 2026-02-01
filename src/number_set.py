@@ -50,15 +50,15 @@ class NumberSet:
         """
 
         background_size = (96, 64)
-        self.__background = pg.Surface(background_size)
-        self.__background.blit(self.__image, area=(0, 0, *background_size))
-        pg.transform.scale(
+        self.__background = pg.Surface(background_size, pg.SRCALPHA)
+        self.__background.blit(self.__image)
+        self.__background = pg.transform.scale(
             self.__background,
             (
                 int(self.__background.get_width() * self.scale),
                 int(self.__background.get_height() * self.scale),
             ),
-        ).convert_alpha()
+        )
 
     def __make_numbers(self):
         """
@@ -73,16 +73,16 @@ class NumberSet:
 
         num_of_numbers = 12  # un-lit 8-segment, a minus, and 0 through 9
         for col in range(numbers_px_left, self.__rect.width, NUMBER_PX_WIDTH):
-            new_number = pg.Surface(numbers_size)
+            new_number = pg.Surface(numbers_size, pg.SRCALPHA)
 
             new_number.blit(self.__image, area=(col, 0, *numbers_size))
-            pg.transform.scale(
+            new_number = pg.transform.scale(
                 new_number,
                 (
                     int(new_number.get_width() * self.scale),
                     int(new_number.get_height() * self.scale),
                 ),
-            ).convert_alpha()
+            )
 
             self.__numbers.append(new_number)
 
@@ -115,13 +115,15 @@ class NumberDisplay:
     def __make_display(self):
         scale = self.__number_set.scale
         display_size = (96 * scale, 64 * scale)
-        self.__display = pg.Surface(display_size)
+        self.__display = pg.Surface(display_size, pg.SRCALPHA)
         self.__display.blit(self.__number_set.get_background())
 
     def __reset_display(self):
         empty_segment = self.__number_set.get_segment(SegmentType.EMPTY)
         for col in range(3):
-            self.__display.blit(empty_segment, (NUMBER_PX_WIDTH * col, 0))
+            self.__display.blit(
+                empty_segment, (col * NUMBER_PX_WIDTH * self.__number_set.scale, 0)
+            )
 
     def get_display(self) -> pg.Surface:
         return self.__display
@@ -162,6 +164,6 @@ class NumberDisplay:
             else:
                 raise ValueError(f"Unhandled character of {segment_char}")
 
-            segment_topleft = (col * NUMBER_PX_WIDTH, 0)
+            segment_topleft = (col * NUMBER_PX_WIDTH * self.__number_set.scale, 0)
             segment_digit = self.__number_set.get_segment(segment_type)
             self.__display.blit(segment_digit, segment_topleft)
