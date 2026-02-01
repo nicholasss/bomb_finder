@@ -36,13 +36,13 @@ class NumberSet:
         """
 
         background_size = (96, 64)
-        background = pg.Surface(background_size)
-        background.blit(self.__image, area=(0, 0, *background_size))
+        self.__background = pg.Surface(background_size)
+        self.__background.blit(self.__image, area=(0, 0, *background_size))
         pg.transform.scale(
-            background,
+            self.__background,
             (
-                int(background.get_width() * self.__scale),
-                int(background.get_height() * self.__scale),
+                int(self.__background.get_width() * self.__scale),
+                int(self.__background.get_height() * self.__scale),
             ),
         ).convert_alpha()
 
