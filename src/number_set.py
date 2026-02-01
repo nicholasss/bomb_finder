@@ -1,7 +1,6 @@
 from enum import Enum
 import pygame as pg
 
-
 NUMBER_IMAGE_PATH = "./../assets/asperite_files/numbers.png"
 NUMBER_PX_HEIGHT = 64
 NUMBER_PX_WIDTH = 32
@@ -72,7 +71,7 @@ class NumberSet:
         numbers_px_left = 96
         numbers_size = (NUMBER_PX_WIDTH, NUMBER_PX_HEIGHT)
 
-        num_of_numbers = 11  # un-lit 8-segment, and 0 through 9
+        num_of_numbers = 12  # un-lit 8-segment, a minus, and 0 through 9
         for row in range(numbers_px_left, self.__rect.width, NUMBER_PX_WIDTH):
             new_number = pg.Surface(numbers_size)
 
@@ -95,19 +94,33 @@ class NumberSet:
     def get_background(self) -> pg.Surface:
         return self.__background
 
+    def get_segment(self, number: SegmentType) -> pg.Surface:
+        return self.__numbers[number.value]
+
 
 class NumberDisplay:
+    """
+    NumberDisplay needs to have an instantiated NumberSet passed in.
+    NumberSet is a number tile set.
+    """
+
     def __init__(self, number_set: NumberSet):
         self.__display: pg.Surface
         self.__number_set: NumberSet = number_set
 
         self.__make_display()
+        self.__reset_display()
 
     def __make_display(self):
         scale = self.__number_set.scale
         display_size = (96 * scale, 64 * scale)
         self.__display = pg.Surface(display_size)
         self.__display.blit(self.__number_set.get_background())
+
+    def __reset_display(self):
+        empty_segment = self.__number_set.get_segment(SegmentType.EMPTY)
+        for row in range(3):
+            self.__display.blit(empty_segment, (NUMBER_PX_WIDTH * row, 0))
 
     def get_display(self) -> pg.Surface:
         return self.__display
@@ -118,4 +131,12 @@ class NumberDisplay:
         elif number > 999:
             raise ValueError("Unable to display above 999")
 
-        pass
+        number_is_negative = False
+        if number < -1:
+            number_is_negative = True
+
+        # TODO:
+        # Turn into string
+        # Split into individual characters
+        # Convert to integers
+        # Place the numbers onto the display
