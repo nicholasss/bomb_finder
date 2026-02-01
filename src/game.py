@@ -226,7 +226,12 @@ class Game:
             self.__flags_remaining_display.get_display(), flag_display_location
         )
 
-        seconds_display_location = (300, 10)
+        seconds_display_location = (
+            self.__screen.get_width()
+            - 10
+            - self.__seconds_elapsed_display.get_display().get_width(),
+            10,
+        )
         self.__screen.blit(
             self.__seconds_elapsed_display.get_display(), seconds_display_location
         )
