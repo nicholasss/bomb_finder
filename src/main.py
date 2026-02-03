@@ -20,13 +20,13 @@ FPS = 120
 SOURCE_FONT_PATH = "./assets/fonts/SourceSansPro/SourcingSansPro-Regular.ttf"
 
 # Debug
-DEBUG_GAME = True
+DEBUG_GAME = False
 
 # Games
-DEFAULT_GRID_SIZE = (6, 6)
-DEFAULT_GRID_TOPLEFT = (200, 200)
+DEFAULT_GRID_SIZE = (9, 9)
+DEFAULT_GRID_TOPLEFT = (100, 180)
 DEFAULT_SEED = 0xABCDEF1234  # All seeds should be a 10 digit hexadecimal number
-DEFAULT_NUMBER_BOMBS = 3
+DEFAULT_NUMBER_BOMBS = 10
 
 
 def main():
